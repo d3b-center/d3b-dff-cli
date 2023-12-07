@@ -1,0 +1,386 @@
+{
+  "transfer_validation_rules": [
+    {
+      "conditions": [],
+      "consequences": [
+        {
+          "column": "sample_id",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "aliquot_id",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "file_name",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "file_format",
+          "equals": "FASTQ,BAM,BAI,CRAM,CRAI,GVCF,VCF,TBI,MAF,PDF,HTML,DCM,IDAT,SVS,GPR,CNS,TXT,PNG,CSV,PED,SEG,TAR,TSV",
+          "valid": true
+        },
+        {
+          "column": "file_size",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "file_hash_type",
+          "equals": "MD5,SHA1,SHA256,SHA512,ETag",
+          "valid": true
+        },
+        {
+          "column": "file_hash_value",
+          "empty": true,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "FASTQ"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".fq.gz,.fastq.gz,.fq,fastq",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "BAM"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".bam",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "BAI"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".bai",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "CRAM"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".cram",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "CRAI"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".crai",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "FASTQ,BAM,CRAM"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_size",
+          "greater_than": "1 GB",
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "genomic_file_rules": [
+    {
+      "conditions": [],
+      "consequences": [
+        {
+          "column": "sample_id",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "aliquot_id",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "tissue_type",
+          "equals": "Tumor,Normal,Abnormal,Peritumoral,Unknown,Not Reported",
+          "valid": true
+        },
+        {
+          "column": "file_name",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "file_format",
+          "equals": "FASTQ,BAM,BAI,CRAM,CRAI,GVCF,VCF,TBI,MAF,PDF,HTML,DCM,IDAT,SVS,GPR,CNS,TXT,PNG,CSV,PED,SEG,TAR,TSV",
+          "valid": true
+        },
+        {
+          "column": "file_size",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "file_hash_type",
+          "equals": "MD5,SHA1,SHA256,SHA512,ETag",
+          "valid": true
+        },
+        {
+          "column": "file_hash_value",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "sequencing_center",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "platform",
+          "equals": "Complete Genomics,Illumina,Ion Torrent,LS454,PacBio,SOLiD,ONT,Other",
+          "valid": true
+        },
+        {
+          "column": "instrument_model",
+          "equals": "454 GS FLX Titanium,AB SOLiD 2,AB SOLiD 3,AB SOLiD 4,Complete Genomics,Illumina Genome Analyzer II,Illumina Genome Analyzer IIx,Illumina HiSeq 2000,Illumina HiSeq 2500,Illumina HiSeq 4000,Illumina HiSeq X Five,Illumina HiSeq X Ten,Illumina MiSeq,Illumina NextSeq,Illumina NovaSeq 6000,Ion Torrent PGM,Ion Torrent Proton,Ion Torrent S5,Other,PacBio RS,Unknown,Not Reported",
+          "valid": true
+        },
+        {
+          "column": "experiment_strategy",
+          "equals": "WGS,WXS,RNA-Seq,Targeted Sequencing,Panel,miRNA-Seq,scRNA-Seq,snRNA-Seq,Methylation,Linked-Read WGS (10x Chromium),ATAC-Seq,Bisulfite-Seq,ChIP-Seq,HiChIP,m6A MeRIP-Seq,scATAC-Seq",
+          "valid": true
+        },
+        {
+          "column": "library_selection",
+          "equals": "Affinity Enrichment,Hybrid Selection,miRNA Size Fractionation,PCR,Poly-T Enrichment,Random,rRNA Depletion,Other",
+          "valid": true
+        },
+        {
+          "column": "library_strand",
+          "equals": "Stranded,Unstranded,First Stranded,Second Stranded,Not Applicable",
+          "valid": true
+        },
+        {
+          "column": "total_reads",
+          "empty": true,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "FASTQ"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "read_pair_number",
+          "equals": "R1,R2,Not Applicable",
+          "valid": true
+        },
+        {
+          "column": "is_paired_end",
+          "equals": "TRUE,FALSE",
+          "valid": true
+        },
+        {
+          "column": "is_adapter_trimmed",
+          "equals": "TRUE,FALSE",
+          "valid": true
+        },
+        {
+          "column": "flow_cell_barcode",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "lane_number",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "file_name",
+          "ends_with": ".fq.gz,.fastq.gz,.fq,fastq",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "is_adapter_trimmed",
+          "equals": "FALSE"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "adapter_sequencing",
+          "empty": true,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "BAM"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "is_paired_end",
+          "equals": "TRUE,FALSE",
+          "valid": true
+        },
+        {
+          "column": "file_name",
+          "ends_with": ".bam",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "experiment_strategy",
+          "equals": "Targeted Sequencing,Panel"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "target_capture_kit_name",
+          "empty": true,
+          "valid": false
+        },
+        {
+          "column": "target_capture_kit_link",
+          "empty": true,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "experiment_strategy",
+          "equals": "WGS,WXS,Targeted Sequencing,Panel"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "mean_coverage",
+          "empty": true,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "BAI"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".bai",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "CRAM"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".cram",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "CRAI"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_name",
+          "ends_with": ".crai",
+          "valid": true
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "column": "file_format",
+          "equals": "FASTQ,BAM,CRAM"
+        }
+      ],
+      "consequences": [
+        {
+          "column": "file_size",
+          "greater_than": "1 GB",
+          "valid": true
+        }
+      ]
+    }
+  ]
+}

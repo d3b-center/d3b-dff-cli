@@ -1,37 +1,66 @@
-# D3b Python Template
+# d3b-dff-cli
 
-<p align="center">
-  <a href="https://github.com/d3b-center/d3b-python-template/blob/master/LICENSE"><img src="https://img.shields.io/github/license/d3b-center/d3b-python-template.svg?style=flat-square"></a>
-  <a href="https://github.com/marketplace/actions/super-linter"><img src="https://github.com/d3b-center/d3b-python-template/workflows/Lint%20Code%20Base/badge.svg"></a>
-  <a href="https://gitmoji.dev"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square" alt="Gitmoji"/>
-</a>
-</p>
+## Description
 
-Use this template to bootstrap a new D3b python repository.
+This is a command-line interface (CLI) for the d3b-dff package.
 
-### Badges
+## Installation
 
-Update the LICENSE badge to point to the new repo location on GitHub.
-Note that the LICENSE badge will fail to render correctly unless the repo has
-been set to **public**.
+Clone the repository:
 
-Add additional badges for CI, docs, and other integrations as needed within the
-`<p>` tag next to the LICENSE.
+```bash
+git clone git@github.com:d3b-center/d3b-dff-cli.git
+cd d3b-dff-cli
+```
+Install the package using pip:
 
-### Repo Description
+```bash
+pip install .
+```
 
-Update the repositories description with a short summary of the repository's
-intent.
-Include an appropriate emoji at the start of the summary.
+## Package Usage
+### Command Overview
+```bash
+d3b -h
+usage: d3b [-h] {version,validation,dewrangle} ...
 
-Add a handful of tags that summarize topics relating to the repository.
-If the repo has a documentation site or webpage, add it next to the repository
-description.
+A command-line interface for d3b-dff-cli.
 
-### Releases
+optional arguments:
+  -h, --help            show this help message and exit
 
-This repo is setup to take advantage of the [d3b-release-maker](https://github.com/d3b-center/d3b-release-maker/). Please follow the instructions there to build releases.
+Available Commands:
+  {version,validation,dewrangle}
+    version             Display version information.
+    validation          Validation commands
+    dewrangle           Dewrangle commands
+```
 
-### Linting
+### Version
+To display the version information:
+```bash
+d3b version
+```
 
-This repo is setup to take advantage of the [Github Super Linter](https://github.com/marketplace/actions/super-linter). Of note are the markdownlint files and the pyproject.toml.
+### Validation
+To perform validation, use the validation command with subcommands:
+
+```bash
+d3b validation  -h
+usage: d3b validation [-h] {manifest,bam,url} ...
+
+optional arguments:
+  -h, --help          show this help message and exit
+
+Validation Subcommands:
+  {manifest,bam,url}
+    manifest          Manifest validation
+    bam               Validator for BAM file @RG based on Samtools
+    url               Validator for URLs
+```
+
+### Dewrangle(WIP)
+To perform dewrangling tasks, use the dewrangle command with subcommands:
+```bash
+d3b dewrangle volume
+```
