@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import argparse
+import csv
 
 # Define a function to perform validation
 def validate_row(row, rules):
@@ -60,13 +61,18 @@ def validate_row(row, rules):
 def main(args):
     rule_type = args.rule_type
     rules_json = args.rules
-    manifest_data = pd.read_csv(args.manifest_file)
+    manifest_data = []
+    with open(args.manifest_file, "r") as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            manifest_data.append(row)
+            
     with open(rules_json, "r") as json_file:
         validation_rules = json.load(json_file)[rule_type]
 
     # Iterate through each row in the DataFrame and perform validation
     validation_failed = False
-    for index, row in manifest_data.iterrows():
+    for index, row in enumerate(manifest_data):
         is_valid, messages = validate_row(row, validation_rules)
         if not is_valid:
             error_message = "Validation Failed For Row {0}:\n{1}".format(index + 1, '\n'.join(messages))
