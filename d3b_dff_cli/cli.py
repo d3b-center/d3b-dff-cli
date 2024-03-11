@@ -78,7 +78,21 @@ def main():
     if hasattr(args, "func"):
         args.func(args)
     else:
-        print("Invalid command. Use --help for usage information.")
+        # something went wrong. Probably a command with no options. Print command's help
+        # retrieve subparsers from parser
+        subparsers_actions = [
+            action
+            for action in parser._actions
+            if isinstance(action, argparse._SubParsersAction)
+        ]
+        # loop through subparser actions and find the command we tried to run
+        for subparsers_action in subparsers_actions:
+            # get all subparsers and print help
+            for choice, subparser in subparsers_action.choices.items():
+                if choice == args.command:
+                    print("Subparser '{}'".format(choice))
+                    print(subparser.format_help())
+                    sys.exit(2)
 
 
 if __name__ == "__main__":
