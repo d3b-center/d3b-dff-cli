@@ -4,7 +4,7 @@ from .version import __version__
 from .modules.validation.check_manifest import main as check_manifest
 from .modules.validation.check_readgroup import main as check_readgroup
 from .modules.validation.check_url import main as check_url
-from .modules.dewrangle.volume import load_and_hash_volume
+from .modules.dewrangle.volume import main as hash_volume
 
 
 def add_hash_arguments(my_parser):
@@ -45,7 +45,7 @@ def add_hash_arguments(my_parser):
         "-study", help="Study name, global id, or study id", required=True
     )
     hash_parser.add_argument("-bucket", help="Bucket name", required=True)
-    hash_parser.set_defaults(func=load_and_hash_volume)
+    hash_parser.set_defaults(func=hash_volume)
 
     return hash_parser
 

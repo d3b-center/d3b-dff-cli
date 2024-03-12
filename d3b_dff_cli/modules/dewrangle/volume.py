@@ -1,4 +1,5 @@
 """Functions to analyze volumes using the Dewrangle GraphQL API"""
+
 import os
 import sys
 import traceback
@@ -6,6 +7,7 @@ import configparser
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 from datetime import datetime
+
 
 def parse_hash_args(args):
     """
@@ -529,3 +531,9 @@ def load_and_hash_volume(args):
         )
 
     return job_id
+
+
+def main(args):
+    """Main function. Call load_and_hash and output job_id."""
+    job_id = load_and_hash_volume(args)
+    print(job_id)
