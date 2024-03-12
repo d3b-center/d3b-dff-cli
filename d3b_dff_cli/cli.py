@@ -107,7 +107,7 @@ def main():
     # Volume Command
     volume_parser = subparsers.add_parser("volume", help="Dewrangle volume commands")
     volume_subparsers = volume_parser.add_subparsers(
-        title="Dewrangle Subcommands", dest="dewrangle_command"
+        title="Dewrangle Subcommands", dest="volume_command"
     )
 
     # volume hash subcommand

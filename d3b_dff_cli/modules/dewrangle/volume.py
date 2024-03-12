@@ -2,7 +2,6 @@
 import os
 import sys
 import traceback
-import argparse
 import configparser
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
@@ -12,40 +11,6 @@ def parse_hash_args(args):
     """
     Parse arguments for use in load_and_hash_volume.
     """
-    # optional args
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-prefix",
-        help="Optional, Path prefix. Default: None",
-        default=None,
-        required=False,
-    )
-    parser.add_argument(
-        "-region",
-        help="Optional, Bucket AWS region code. Default: us-east-1",
-        default="us-east-1",
-        required=False,
-    )
-    parser.add_argument(
-        "-billing",
-        help="Optional, billing group name. When not provided, use default billing group for organization",
-        default=None,
-        required=False,
-    )
-    parser.add_argument(
-        "-credential",
-        help="Dewrangle AWS credential name. Default, try to find available credential.",
-        required=False,
-    )
-    # required args
-    required_args = parser.add_argument_group("required arguments")
-    required_args.add_argument(
-        "-study", help="Study name, global id, or study id", required=True
-    )
-    required_args.add_argument("-bucket", help="Bucket name", required=True)
-
-    # parse and return arguments
-    args = parser.parse_args()
     prefix = args.prefix
     region = args.region
     study = args.study
@@ -172,7 +137,6 @@ def get_study_id(client, study_name):
     # loop through query results, find the study we're looking for and it's volumes
     for study in studies:
         if study_name in [study, studies[study]["global_id"], studies[study]["name"]]:
-            print(studies[study]["global_id"])
             study_ids.append(study)
 
     if len(study_ids) == 1:
@@ -439,17 +403,96 @@ def list_and_hash_volume(client, volume_id, billing_id):
     return job_id
 
 
+def pick_external_id(name, externals, external_type):
+    """From a dictionary of either credential or billing group ids, pick the one to use."""
+
+    ext_id = None
+
+    org = "other"
+    if external_type.lower() == "billing_group":
+        org = "organization"
+    elif external_type.lower() == "credential":
+        org = "study"
+
+    message = ""
+
+    if len(externals) == 1 and name is None:
+        ((ext_id, info),) = externals.items()
+        ext_id = list(externals.keys())[0]
+    elif name:
+        for ext in externals:
+            if name == externals[ext]["name"]:
+                ext_id = ext
+        if ext_id is None:
+            message = "{} {} not found in {}".format(
+                external_type.capitalize(), name, org
+            )
+    elif len(externals) == 0:
+        message = "No credentials in study."
+    else:
+        message = "Multiple {} found in {} but none provided. Please run again and provide one of the following crdentials ids:{}{}".format(
+            external_type, org, "\n", externals
+        )
+
+    if ext_id is None:
+        raise ValueError(message)
+
+    return ext_id
+
+
+def get_billing_groups(client, org_id):
+    """Get available billing groups for an organization."""
+
+    billing_groups = {}
+
+    # query all organizations, studies, and billing groups the user has access to.
+    # set up query to get all available studies
+    query = gql(
+        """
+        query Org_Query($id: ID!) {
+            organization: node(id: $id) {
+                ... on Organization {
+                    billingGroups {
+                        edges {
+                            node {
+                                name
+                                id
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+    )
+
+    params = {"id": org_id}
+
+    # run query
+    result = client.execute(query, params)
+
+    for bg in result["organization"]["billingGroups"]["edges"]:
+        name = bg["node"]["name"]
+        id = bg["node"]["id"]
+        billing_groups[id] = {"name": name}
+
+    return billing_groups
+
+
 def load_and_hash_volume(args):
     """
     Wrapper function that checks if a volume is loaded, and hashes it.
-    Inputs: AWS bucket (volume) name, study name, aws region, and optional volume prefix.
+    Inputs: AWS bucket name, study name, aws region, and optional volume prefix.
     Output: job id of parent job created when volume is hashed.
     """
 
-    prefix, region, study_name, volume_name, aws_cred, billing = parse_hash_args(args)
-
-    if client is None:
-        client = create_gql_client()
+    prefix = args.prefix
+    region = args.region
+    study_name = args.study
+    bucket_name = args.bucket
+    aws_cred = args.credential
+    billing = args.billing
+    client = create_gql_client()
 
     job_id = None
 
@@ -463,7 +506,7 @@ def load_and_hash_volume(args):
 
         # check if volume loaded to study
         study_volumes = get_study_volumes(client, study_id)
-        volume_id = process_volumes(study_id, study_volumes, vname=volume_name)
+        volume_id = process_volumes(study_id, study_volumes, vname=bucket_name)
 
         if volume_id is None:
             # need to load, get credential
@@ -471,7 +514,7 @@ def load_and_hash_volume(args):
 
             # load it
             volume_id = add_volume(
-                client, study_id, prefix, region, volume_name, aws_cred_id
+                client, study_id, prefix, region, bucket_name, aws_cred_id
             )
 
         # hash
@@ -480,7 +523,7 @@ def load_and_hash_volume(args):
     except Exception:
         print(
             "The following error occurred trying to hash {}: {}".format(
-                volume_name, traceback.format_exc()
+                bucket_name, traceback.format_exc()
             ),
             file=sys.stderr,
         )
