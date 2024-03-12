@@ -4,7 +4,51 @@ from .version import __version__
 from .modules.validation.check_manifest import main as check_manifest
 from .modules.validation.check_readgroup import main as check_readgroup
 from .modules.validation.check_url import main as check_url
-from .modules.dewrangle.volume import dewrangle_volume
+from .modules.dewrangle.volume import load_and_hash_volume
+
+
+def add_hash_arguments(my_parser):
+    """
+    Create parser for volume hash subcommand.
+    Input:
+        - my_parser: argparse parser being added to
+    Output:
+        - original parser with added arguments
+    """
+    hash_parser = my_parser.add_parser(
+        "hash", help="Hash volume in Dewrangle"
+    )
+    hash_parser.add_argument(
+        "-prefix",
+        help="Optional, Path prefix. Default: None",
+        default=None,
+        required=False,
+    )
+    hash_parser.add_argument(
+        "-region",
+        help="Optional, Bucket AWS region code. Default: us-east-1",
+        default="us-east-1",
+        required=False,
+    )
+    hash_parser.add_argument(
+        "-billing",
+        help="Optional, billing group name. When not provided, use default billing group for organization",
+        default=None,
+        required=False,
+    )
+    hash_parser.add_argument(
+        "-credential",
+        help="Dewrangle AWS credential name. Default, try to find available credential.",
+        required=False,
+    )
+    hash_parser.add_argument(
+        "-study", help="Study name, global id, or study id", required=True
+    )
+    hash_parser.add_argument("-bucket", help="Bucket name", required=True)
+    hash_parser.set_defaults(func=load_and_hash_volume)
+
+    return hash_parser
+
 
 
 def main():
@@ -60,16 +104,14 @@ def main():
     parser_url.add_argument("urls", nargs="+", help="One or more URLs to validate")
     parser_url.set_defaults(func=check_url)
 
-    # Dewrangle Command
-    dewrangle_parser = subparsers.add_parser("dewrangle", help="Dewrangle commands")
-    dewrangle_subparsers = dewrangle_parser.add_subparsers(
+    # Volume Command
+    volume_parser = subparsers.add_parser("volume", help="Dewrangle volume commands")
+    volume_subparsers = volume_parser.add_subparsers(
         title="Dewrangle Subcommands", dest="dewrangle_command"
     )
-    # dewrangle volume subcommand
-    dewrangle_volume_parser = dewrangle_subparsers.add_parser(
-        "volume", help="Dewrangle volume"
-    )
-    dewrangle_volume_parser.set_defaults(func=lambda args: dewrangle_volume())
+
+    # volume hash subcommand
+    hash_parser = add_hash_arguments(volume_subparsers)
 
     args = parser.parse_args()
 
@@ -96,6 +138,7 @@ def main():
                     print("Subparser '{}'".format(choice))
                     print(subparser.format_help())
                     sys.exit(2)
+
 
 
 if __name__ == "__main__":
