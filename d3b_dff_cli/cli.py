@@ -32,14 +32,17 @@ def main():
         "manifest", help="Manifest validation based on defined rules."
     )
     manifest_parser.add_argument(
-        "-rules", help="Formatted JSON file defining validation rules."
+        "-rules", help="Formatted JSON file defining validation rules.", required=True
     )
     manifest_parser.add_argument(
         "-rule_type",
         help="Specific type of validation rule defined in the json rule file.",
+        required=True,
     )
     manifest_parser.add_argument(
-        "-manifest_file", help="Manifest based on the d3b genomics manifest template."
+        "-manifest_file",
+        help="Manifest based on the d3b genomics manifest template.",
+        required=True,
     )
     manifest_parser.set_defaults(func=check_manifest)
 
