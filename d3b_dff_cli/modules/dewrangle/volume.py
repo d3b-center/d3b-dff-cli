@@ -79,6 +79,52 @@ def create_gql_client(endpoint=None, api_key=None):
     return client
 
 
+def get_study_credentials(client, study_id):
+    """Get credential ids from a study."""
+
+    # query all studies and credentials the user has access to.
+    # in the future, this should be a simpler query to get study id from study name
+    credentials = {}
+
+    # set up query to get all credentials in the study
+    query = gql(
+        """
+        query Study_Query($id: ID!) {
+            study: node(id: $id) {
+                id
+                ... on Study {
+                    credentials {
+                        edges {
+                            node {
+                                id
+                                name
+                                key
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+    )
+
+    params = {"id": study_id}
+
+    # run query
+    result = client.execute(query, variable_values=params)
+
+    # loop through query results, find the study we're looking for and it's volumes
+    for study in result:
+        for cred_edge in result[study]["credentials"]["edges"]:
+            cred = cred_edge["node"]
+            cid = cred["id"]
+            name = cred["name"]
+            key = cred["key"]
+            credentials[cid] = {"name": name, "key": key}
+
+    return credentials
+
+
 def get_all_studies(client):
     """Query all available studies, return study ids and names"""
 
