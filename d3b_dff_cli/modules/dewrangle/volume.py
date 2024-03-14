@@ -527,19 +527,13 @@ def get_billing_groups(client, org_id):
     return billing_groups
 
 
-def load_and_hash_volume(args):
+def load_and_hash_volume(bucket_name, study_name, region, prefix=None, billing=None, aws_cred=None):
     """
     Wrapper function that checks if a volume is loaded, and hashes it.
     Inputs: AWS bucket name, study name, aws region, and optional volume prefix.
     Output: job id of parent job created when volume is hashed.
     """
 
-    prefix = args.prefix
-    region = args.region
-    study_name = args.study
-    bucket_name = args.bucket
-    aws_cred = args.credential
-    billing = args.billing
     client = create_gql_client()
 
     job_id = None
@@ -581,5 +575,12 @@ def load_and_hash_volume(args):
 
 def main(args):
     """Main function. Call load_and_hash and output job_id."""
-    job_id = load_and_hash_volume(args)
+    job_id = load_and_hash_volume(
+        args.bucket,
+        args.study,
+        args.region,
+        args.prefix,
+        args.billing,
+        args.credential,
+    )
     print(job_id)
