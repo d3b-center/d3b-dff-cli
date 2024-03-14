@@ -527,7 +527,15 @@ def get_billing_groups(client, org_id):
     return billing_groups
 
 
-def load_and_hash_volume(bucket_name, study_name, region, prefix=None, billing=None, aws_cred=None, token=None):
+def load_and_hash_volume(
+    bucket_name,
+    study_name,
+    region,
+    prefix=None,
+    billing=None,
+    aws_cred=None,
+    token=None,
+):
     """
     Wrapper function that checks if a volume is loaded, and hashes it.
     Inputs: AWS bucket name, study name, aws region, and optional volume prefix.
