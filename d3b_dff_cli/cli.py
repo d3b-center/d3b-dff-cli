@@ -105,13 +105,13 @@ def main():
     parser_url.set_defaults(func=check_url)
 
     # Volume Command
-    volume_parser = subparsers.add_parser("volume", help="Dewrangle volume commands")
-    volume_subparsers = volume_parser.add_subparsers(
-        title="Dewrangle Subcommands", dest="volume_command"
+    dewrangle_parser = subparsers.add_parser("dewrangle", help="Dewrangle commands")
+    dewrangle_subparsers = dewrangle_parser.add_subparsers(
+        title="Dewrangle Subcommands", dest="dewrangle_command"
     )
 
     # volume hash subcommand
-    hash_parser = add_hash_arguments(volume_subparsers)
+    hash_parser = add_hash_arguments(dewrangle_subparsers)
 
     args = parser.parse_args()
 
