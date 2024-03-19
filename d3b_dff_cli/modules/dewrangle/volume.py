@@ -542,7 +542,7 @@ def load_and_hash_volume(
     Output: job id of parent job created when volume is hashed.
     """
 
-    client = create_gql_client(token)
+    client = create_gql_client(api_key=token)
 
     job_id = None
 
