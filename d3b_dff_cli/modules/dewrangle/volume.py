@@ -544,6 +544,10 @@ def load_and_hash_volume(
 
     client = create_gql_client(api_key=token)
 
+    print(client)
+    print("Successfully made client")
+    exit(1)
+
     job_id = None
 
     try:
