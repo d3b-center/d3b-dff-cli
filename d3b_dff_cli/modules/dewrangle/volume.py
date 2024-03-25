@@ -545,10 +545,13 @@ def load_and_hash_volume(
     client = create_gql_client(api_key=token)
 
     print(client)
-    print("Successfully made client")
-    exit(1)
-
+    
+    study_id = get_study_id(client, study_name)
+    print("Got study")
+    print(study_id)
     job_id = None
+
+    exit(1)
 
     try:
         # get study and org ids
