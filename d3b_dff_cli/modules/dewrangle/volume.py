@@ -173,35 +173,6 @@ def get_all_studies(client):
     return studies
 
 
-def get_all_films():
-    """Test that the lambda can connect to a public api"""
-
-    transport = AIOHTTPTransport(
-        url="https://swapi-graphql.netlify.app/.netlify/functions/index"
-    )
-    client = Client(transport=transport, fetch_schema_from_transport=True)
-
-    # set up query to get all available studies
-    query = gql(
-        """
-        query Query {
-            allFilms {
-                films {
-                    title
-                    director
-                    releaseDate
-                    }
-                }
-            }
-        """
-    )
-
-    # run query
-    result = client.execute(query)
-
-    return result
-
-
 def get_study_id(client, study_name):
     """Query all available studies, return study id"""
 
@@ -573,14 +544,7 @@ def load_and_hash_volume(
 
     client = create_gql_client(api_key=token)
 
-    print(client)
-
-    films = get_all_films()
-    print(films)
-
     job_id = None
-
-    exit(1)
 
     try:
         # get study and org ids
