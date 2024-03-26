@@ -255,6 +255,7 @@ def get_study_volumes(client, study_id):
                             node {
                                 id
                                 name
+                                pathPrefix
                             }
                         }
                     }
@@ -274,7 +275,8 @@ def get_study_volumes(client, study_id):
             volume = volume_edge["node"]
             vid = volume["id"]
             vname = volume["name"]
-            study_volumes[vid] = vname
+            prefix = volume["pathPrefix"]
+            study_volumes[vid] = {"name": vname, "pathPrefix": prefix}
 
     return study_volumes
 
@@ -285,6 +287,7 @@ def process_volumes(study, volumes, **kwargs):
     Outputs: volume id"""
     volume_id = kwargs.get("vid", None)
     vname = kwargs.get("vname", None)
+    vpre = kwargs.get("prefix", None)
 
     if volume_id:
         if volume_id not in volumes.keys():
@@ -295,7 +298,7 @@ def process_volumes(study, volumes, **kwargs):
         # see how many times the volume was added to the study
         matching_volumes = []
         for vol in volumes:
-            if volumes[vol] == vname:
+            if volumes[vol]["name"] == vname and volumes[vol]["pathPrefix"] == vpre:
                 matching_volumes.append(vol)
         count = len(matching_volumes)
 
@@ -556,7 +559,7 @@ def load_and_hash_volume(
 
         # check if volume loaded to study
         study_volumes = get_study_volumes(client, study_id)
-        volume_id = process_volumes(study_id, study_volumes, vname=bucket_name)
+        volume_id = process_volumes(study_id, study_volumes, vname=bucket_name, prefix=prefix)
 
         if volume_id is None:
             # need to load, get credential
