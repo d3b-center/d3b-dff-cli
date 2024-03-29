@@ -483,3 +483,161 @@ def get_billing_groups(client, org_id):
         billing_groups[id] = {"name": name}
 
     return billing_groups
+
+
+def get_volume_jobs(client, vid):
+    """Query volume for a list of jobs"""
+    jobs = {}
+
+    query = gql(
+        """
+        query Volume_Job_Query($id: ID!) {
+            volume: node(id: $id) {
+                id
+                ... on Volume {
+                    jobs {
+                        edges {
+                            node {
+                                id
+                                operation
+                                completedAt
+                                createdAt
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+    )
+
+    params = {"id": vid}
+
+    # run query
+    result = client.execute(query, variable_values=params)
+
+    # format result
+    for vol in result:
+        for job in result[vol]["jobs"]:
+            for node in result[vol]["jobs"][job]:
+                id = node["node"]["id"]
+                # convert createdAt from string to datetime object
+                created = datetime.strptime(
+                    node["node"]["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                op = node["node"]["operation"]
+                comp = datetime.strptime(
+                    node["node"]["completedAt"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                jobs[id] = {"operation": op, "createdAt": created, "completedAt": comp}
+
+    return jobs
+
+
+def get_most_recent_job(client, vid, job_type):
+    """Query volume and get most recent job"""
+    jid = None
+    recent_date = None
+
+    jobs = get_volume_jobs(client, vid)
+
+    if job_type.upper() in ["HASH", "VOLUME_HASH"]:
+        job_type = "VOLUME_HASH"
+    elif job_type.upper() in ["LIST", "VOLUME_LIST"]:
+        job_type = "VOLUME_LIST"
+    else:
+        raise ValueError("Unsupported job type: {}".format(job_type))
+
+    for job in jobs:
+        if jobs[job]["operation"] == job_type:
+            # check if date is most recent
+            if recent_date is None or jobs[job]["createdAt"] > recent_date:
+                recent_date = jobs[job]["createdAt"]
+                jid = job
+
+    if jid is None:
+        raise ValueError(
+            "no job(s) matching job type: {} found in volume".format(job_type)
+        )
+
+    return jid
+
+
+def get_job_info(jobid, client=None):
+    """Query job info with job id"""
+
+    if client is None:
+        client = create_gql_client()
+
+    query = gql(
+        """
+        query Job_Query($id: ID!) {
+            job: node(id: $id) {
+                id
+                ... on Job {
+                    operation
+                    createdAt
+                    completedAt
+                    errors {
+                        edges {
+                            node {
+                                message
+                                id
+                            }
+                        }
+                    billingGroup {
+                        name
+                    }
+                    cost {
+                        cents
+                    }
+                    parentJob {
+                        id
+                        operation
+                        createdAt
+                        completedAt
+                        errors {
+                            edges {
+                                node {
+                                    message
+                                    id
+                                }
+                            }
+                        billingGroup {
+                            name
+                        }
+                        cost {
+                            cents
+                        }
+                    }
+                    children {
+                        id
+                        operation
+                        createdAt
+                        completedAt
+                        errors {
+                            edges {
+                                node {
+                                    message
+                                    id
+                                }
+                            }
+                        billingGroup {
+                            name
+                        }
+                        cost {
+                            cents
+                        }
+                    }
+                }
+            }
+        }
+        """
+    )
+
+    params = {"id": jobid}
+
+    # run query
+    result = client.execute(query, variable_values=params)
+
+    return result
