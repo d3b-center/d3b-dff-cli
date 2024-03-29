@@ -5,50 +5,47 @@ from .modules.validation.check_manifest import main as check_manifest
 from .modules.validation.check_readgroup import main as check_readgroup
 from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
+from .modules.dewrangle.list_jobs import main as list_jobs
+from .modules.dewrangle.download_job import main as download_job
 
 
-def add_hash_arguments(my_parser):
+def add_dewrangle_arguments(my_parser):
     """
-    Create parser for volume hash subcommand.
+    Add standard arguments for Dewrangle subcommands.
     Input:
         - my_parser: argparse parser being added to
     Output:
         - original parser with added arguments
     """
-    hash_parser = my_parser.add_parser(
-        "hash", help="Hash volume in Dewrangle"
-    )
-    hash_parser.add_argument(
+    my_parser.add_argument(
         "-prefix",
         help="Optional, Path prefix. Default: None",
         default=None,
         required=False,
     )
-    hash_parser.add_argument(
+    my_parser.add_argument(
         "-region",
         help="Optional, Bucket AWS region code. Default: us-east-1",
         default="us-east-1",
         required=False,
     )
-    hash_parser.add_argument(
+    my_parser.add_argument(
         "-billing",
         help="Optional, billing group name. When not provided, use default billing group for organization",
         default=None,
         required=False,
     )
-    hash_parser.add_argument(
+    my_parser.add_argument(
         "-credential",
         help="Dewrangle AWS credential name. Default, try to find available credential.",
         required=False,
     )
-    hash_parser.add_argument(
+    my_parser.add_argument(
         "-study", help="Study name, global id, or study id", required=True
     )
-    hash_parser.add_argument("-bucket", help="Bucket name", required=True)
-    hash_parser.set_defaults(func=hash_volume)
+    my_parser.add_argument("-bucket", help="Bucket name", required=True)
 
-    return hash_parser
-
+    return my_parser
 
 
 def main():
@@ -104,14 +101,37 @@ def main():
     parser_url.add_argument("urls", nargs="+", help="One or more URLs to validate")
     parser_url.set_defaults(func=check_url)
 
-    # Volume Command
+    # Dewrangle commands
+    # hash: load a bucket to Dewrangle and hash it
+    # list_jobs: list jobs run on a bucket
+    # download: download the results of a job
     dewrangle_parser = subparsers.add_parser("dewrangle", help="Dewrangle commands")
     dewrangle_subparsers = dewrangle_parser.add_subparsers(
         title="Dewrangle Subcommands", dest="dewrangle_command"
     )
 
-    # volume hash subcommand
-    hash_parser = add_hash_arguments(dewrangle_subparsers)
+    # hash subcommand
+    hash_parser = dewrangle_subparsers.add_parser("hash", help="Hash volume in Dewrangle")
+    hash_parser = add_dewrangle_arguments(hash_parser)
+    hash_parser.set_defaults(func=hash_volume)
+
+    # list_jobs subcommand
+    list_parser = dewrangle_subparsers.add_parser(
+        "list_jobs", help="List volume jobs in Dewrangle"
+    )
+    list_parser = add_dewrangle_arguments(list_parser)
+    list_parser.set_defaults(func=list_jobs)
+
+    # download subcommand
+    dl_parser = dewrangle_subparsers.add_parser(
+        "download", help="Download job results from Dewrangle"
+    )
+    dl_parser.add_argument(
+        "-jobid",
+        help="Dewrangle jobid",
+        required=True,
+    )
+    dl_parser.set_defaults(func=download_job)
 
     args = parser.parse_args()
 
@@ -138,7 +158,6 @@ def main():
                     print("Subparser '{}'".format(choice))
                     print(subparser.format_help())
                     sys.exit(2)
-
 
 
 if __name__ == "__main__":
