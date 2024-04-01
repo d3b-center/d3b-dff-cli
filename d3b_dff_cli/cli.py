@@ -6,7 +6,7 @@ from .modules.validation.check_readgroup import main as check_readgroup
 from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
-from .modules.dewrangle.download_job import main as download_job
+from .modules.dewrangle.download_job import main as download_dewrangle_job
 
 
 def add_dewrangle_arguments(my_parser):
@@ -131,7 +131,12 @@ def main():
         help="Dewrangle jobid",
         required=True,
     )
-    dl_parser.set_defaults(func=download_job)
+    dl_parser.add_argument(
+        "-outfile",
+        help="Output file name",
+        required=True,
+    )
+    dl_parser.set_defaults(func=download_dewrangle_job)
 
     args = parser.parse_args()
 
