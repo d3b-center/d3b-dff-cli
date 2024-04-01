@@ -18,7 +18,6 @@ def list_volume_jobs(
 
     # get study and org ids
     study_id = hf.get_study_id(client, study_name)
-    org_id = hf.get_org_id_from_study(client, study_id)
 
     # check if volume loaded to study
     study_volumes = hf.get_study_volumes(client, study_id)
