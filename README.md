@@ -59,8 +59,30 @@ Validation Subcommands:
     url               Validator for URLs
 ```
 
-### Dewrangle(WIP)
+### Dewrangle
 To perform dewrangling tasks, use the dewrangle command with subcommands:
 ```bash
-d3b dewrangle volume
+d3b dewrangle
+Subparser 'dewrangle'
+usage: d3b dewrangle [-h] {hash,list_jobs,download} ...
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Dewrangle Subcommands:
+  {hash,list_jobs,download}
+    hash                Hash volume in Dewrangle
+    list_jobs           List volume jobs in Dewrangle
+    download            Download job results from Dewrangle
 ```
+Note: In Dewrangle, volumes are AWS s3 buckets with or without a prefix (sub-directory). Studies are collections of volumes. Generally, we prefer to have studies correspond to AWS accounts. It is also preferable to add and hash an entire bucket to avoid the costs associated with launching multiple hash jobs should you need them later.
+
+If a volume was previously hashed and a new hash job is launched, only new or modified files will be hashed in the new job. All files in the bucket will be included in the results file.
+
+#### Dewrangle Personal Access Token
+To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate a personal access token. Once signed in, click on your profile icon, click "Settings", then click "Generate new token". Name your token and copy the token string. Paste the token into a file called `~/.dewrangle/credentials`.
+
+###### Dewrangle Credentials File
+```bash
+[default]
+  api_key = "<your token string>"
