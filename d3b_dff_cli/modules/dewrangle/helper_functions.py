@@ -635,8 +635,6 @@ def download_job_result(jobid, client=None, api_key=None):
                 else:
                     print(f"Failed to fetch the CSV. Status code: {response.status_code}")
 
-            print(job_result)
-
         else:
             print("Job type {} does not have results to download".format(job_type))
 
