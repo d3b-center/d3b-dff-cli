@@ -17,8 +17,10 @@ def download_job(jobid, token=None):
 def main(args):
     """Main function."""
 
-    status, job_df = download_job(args.jobid)
+    status, job_res = download_job(args.jobid)
     if status == "Complete":
-        job_df.to_csv(args.outfile)
+        with open(args.outfile, "w") as f:
+            for line in job_res:
+                f.write("%s\n" % ",".join(line))
     else:
         print("Job incomplete, please check again later.")

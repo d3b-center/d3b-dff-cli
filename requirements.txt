@@ -13,7 +13,6 @@ graphql-core==3.2.3
 idna==3.6
 multidict==6.0.5
 numpy==1.24.4
-pandas==2.0.3
 pysam==0.22.0
 python-dateutil==2.8.2
 pytz==2023.3.post1

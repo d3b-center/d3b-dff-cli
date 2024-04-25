@@ -1,11 +1,8 @@
 """Dewrangle helper functions"""
 
 import os
-import sys
-import traceback
 import configparser
 import requests
-import pandas as pd
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 from datetime import datetime
@@ -592,22 +589,6 @@ def get_job_info(jobid, client=None):
     return result
 
 
-def request_to_df(url, **kwargs):
-    """Call api and return response as a pandas dataframe."""
-    my_data = []
-    with requests.get(url, **kwargs) as response:
-        # check if the request was successful
-        if response.status_code == 200:
-            for line in response.iter_lines():
-                my_data.append(line.decode().split(","))
-        else:
-            print(f"Failed to fetch the CSV. Status code: {response.status_code}")
-
-    my_cols = my_data.pop(0)
-    df = pd.DataFrame(my_data, columns=my_cols)
-    return df
-
-
 def download_job_result(jobid, client=None, api_key=None):
     """Check if a job is complete, download results if it is.
     If the job is a list and hash job, only download the hash result."""
@@ -616,7 +597,7 @@ def download_job_result(jobid, client=None, api_key=None):
 
     job_status = None
 
-    job_result = None
+    job_result = []
 
     job_info = get_job_info(jobid, client)
 
@@ -643,7 +624,17 @@ def download_job_result(jobid, client=None, api_key=None):
                     if child_job["operation"] == "VOLUME_HASH":
                         jobid = child_job["id"]
             url = endpoint + jobid + "/result"
-            job_result = request_to_df(url, headers=req_header, stream=True)
+
+            # Query Dewrangle REST API and get the job results
+            with requests.get(url, headers=req_header, stream=True) as response:
+                # check if the request was successful
+                if response.status_code == 200:
+                    for line in response.iter_lines():
+                        job_result.append(line.decode().split(","))
+
+                else:
+                    print(f"Failed to fetch the CSV. Status code: {response.status_code}")
+
         else:
             print("Job type {} does not have results to download".format(job_type))
 
