@@ -86,3 +86,8 @@ To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate
 ```bash
 [default]
   api_key = "<your token string>"
+```
+
+### Jira
+
+This isn't included as an option on the command line, and is only available as importable functions. The main function is `add_jira_comment` which adds a provided message as a comment to the provided ticket.
