@@ -1,7 +1,6 @@
 import json
 import argparse
 import pandas as pd
-import pathlib
 
 # Define a function to perform validation
 def validate_row(row, rules):
