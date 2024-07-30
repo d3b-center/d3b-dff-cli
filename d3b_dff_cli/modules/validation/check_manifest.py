@@ -1,6 +1,6 @@
 import json
 import argparse
-import csv
+import pandas as pd
 
 # Define a function to perform validation
 def validate_row(row, rules):
@@ -60,18 +60,30 @@ def validate_row(row, rules):
 def main(args):
     rule_type = args.rule_type
     rules_json = args.rules
-    manifest_data = []
-    with open(args.manifest_file, "r") as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        for row in csv_reader:
-            manifest_data.append(row)
-            
+    manifest = args.manifest_file
+
+    file_extension = manifest.split('.')[-1].lower()
+    if file_extension == 'csv':
+        manifest_data = pd.read_csv(manifest)
+    elif file_extension == 'tsv':
+        manifest_data = pd.read_csv(manifest, delimiter='\t')
+    elif file_extension in ['xls', 'xlsx']:
+        xlsx = pd.ExcelFile(manifest)
+        if len(xlsx.sheet_names) == 1:
+            manifest_data = pd.read_excel(xlsx)
+        elif "Genomics_Manifest" in xlsx.sheet_names:
+            manifest_data = pd.read_excel(xlsx, "Genomics_Manifest")
+        else:
+            raise ValueError(f"Genomics_Manifest sheet not found in {manifest}")
+    else:
+        raise ValueError("Unsupported file format. Please provide a CSV, TSV, or Excel file.")
+    
     with open(rules_json, "r") as json_file:
         validation_rules = json.load(json_file)[rule_type]
 
     # Iterate through each row in the DataFrame and perform validation
     validation_failed = False
-    for index, row in enumerate(manifest_data):
+    for index, row in manifest_data.iterrows():
         is_valid, messages = validate_row(row, validation_rules)
         if not is_valid:
             error_message = "Validation Failed For Row {0}:\n{1}".format(index + 1, '\n'.join(messages))
