@@ -86,3 +86,19 @@ To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate
 ```bash
 [default]
   api_key = "<your token string>"
+```
+
+### Registration
+To perform registration, use the registration command:
+
+```bash
+d3b registration -h
+usage: d3b registration [-h] --input INPUT
+
+This command handles the registration process. Please check https://github.com/d3b-center/d3b-dff-cli/data/registration/README.md for details.
+
+optional arguments:
+  -h, --help     show this help message and exit
+  --input INPUT  Path to the JSON file for registration
+  
+```

@@ -1,0 +1,16 @@
+{
+    "_note": {
+        "_comment": "This JSON file contains the paths to the manifest files required for the registration process.",
+        "_TODO": "Replace this with your own manifests for the registration.",
+        "package_name": "Required: New ingest package name.",
+        "genomics_manifest": "Required: Path to the genomics manifest CSV file. Example manifest: 'templates/genomicsManifest_template.csv' ",
+        "sample_manifest": "Required: Path to the sample manifest CSV file. Example manifest: 'templates/sampleManifest_template.csv' ",
+        "hash_manifest": "Required: Path to the hash report CSV file. Example manifest: 'templates/hashReport_template.csv' ",
+        "mapping_manifest": "Optional: Path to the mapping JSON file. Default is 'ingest_mapping.json' if not provided."
+    },
+    "package_name": "test_ingest",
+    "sample_manifest": "templates/sampleManifest_template.csv",
+    "genomics_manifest": "templates/source_genomics_template.csv",
+    "hash_manifest": "templates/hashReport_template.csv",
+    "mapping_manifest": ""
+}

@@ -1,0 +1,4 @@
+study_id,subject_id,family_id,sample_id,aliquot_id,tissue_type,analyte_type,composition,gender,race,ethnicity,diagnosis_category,diagnosis,age_at_diagnosis_days,age_at_collection_days,is_proband,phenotype,is_affected,tumor_location,tumor_descriptor,sample_anatomic_site,preservation_method,shipment_origin,shipment_date,volume_ul,visible,visibility_reason,visibility_comment
+SD_P6A1APWC,PNOC022-54,,PMLBS001HPY,PMLBM000HDH_T_WXS,Tumor,DNA,,,,,,,,3270,,,,,,,,,,,TRUE,Other,
+SD_P6A1APWC,PNOC022-54,,PMLBS001HPY,PMLBM000HDI_T_RNA-Seq,Tumor,RNA,,,,,,,,3270,,,,,,,,,,,TRUE,Other,
+SD_P6A1APWC,PNOC022-54,,PMLBS001HPX,PMLBM000HDK_N_WXS,Normal,DNA,,,,,,,,3270,,,,,,,,,,,TRUE,Other,

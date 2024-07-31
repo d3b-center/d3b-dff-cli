@@ -7,6 +7,8 @@ from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
+from .modules.registration.run_ingest_package import main as run_ingest_package
+
 
 
 def add_dewrangle_arguments(my_parser):
@@ -137,6 +139,20 @@ def main():
         required=True,
     )
     dl_parser.set_defaults(func=download_dewrangle_job)
+
+
+    # Registration Command
+    registration_parser = subparsers.add_parser(
+        "registration", 
+        help="Registration commands",
+        description="This command handles the registration process. Please check https://github.com/d3b-center/d3b-dff-cli/data/registration/README.md for details."
+    )
+    registration_parser.add_argument(
+        "--input",
+        help="Path to the JSON file for registration",
+        required=True,
+    )
+    registration_parser.set_defaults(func=run_ingest_package)
 
     args = parser.parse_args()
 

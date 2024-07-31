@@ -11,6 +11,7 @@ setup(
     name='d3b-dff-cli',
     version=__version__,
     packages=find_packages(),
+    include_package_data=True,
     entry_points={
         'console_scripts': [
             'd3b=d3b_dff_cli.cli:main',
