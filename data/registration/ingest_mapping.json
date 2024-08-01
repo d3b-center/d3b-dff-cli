@@ -492,7 +492,7 @@
         },
         {
             "type": "value_map",
-            "in_col": "kf_sequencing_experiment_id",
+            "in_col": "sequencing_experiment_id",
             "m": "lambda x: Split(re.split('[;]', x))",
             "out_col": "CONCEPT.SEQUENCING.TARGET_SERVICE_ID"
         },
