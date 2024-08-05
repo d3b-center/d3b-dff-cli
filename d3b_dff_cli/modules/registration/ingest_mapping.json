@@ -555,8 +555,8 @@
             "out_col": "CONCEPT.GENOMIC_FILE.REFERENCE_GENOME"
         },
         {
-            "type": "constant_map",
-            "m": "constants.COMMON.TRUE",
+            "type": "keep_map",
+            "in_col": "controlled_access",
             "out_col": "CONCEPT.GENOMIC_FILE.CONTROLLED_ACCESS"
         },
         {

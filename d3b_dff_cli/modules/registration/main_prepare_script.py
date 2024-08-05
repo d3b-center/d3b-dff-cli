@@ -280,6 +280,7 @@ def transform_function(mapped_df_dict):
 """
 
 ## create extract_configs scripts
+
 def generate_operations_script(df, mappings, mapping_section):
     operations = []
 
@@ -305,8 +306,8 @@ def generate_operations_script(df, mappings, mapping_section):
                     operations.append(f'keep_map(in_col="{in_col}", out_col={out_col})')
                 elif map_type == 'value_map':
                     operations.append(f'value_map(in_col="{in_col}", m={m}, out_col={out_col})')
-                elif map_type == 'constant_map':
-                    operations.append(f'constant_map(m={m}, out_col={out_col})')
+            elif map_type == 'constant_map':
+                operations.append(f'constant_map(m={m}, out_col={out_col})')
 
     operations_script = "    " + ",\n    ".join(operations) + "\n"
     return operations_script
