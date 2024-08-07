@@ -16,21 +16,27 @@ args = parser.parse_args()
 sample_df = gf_df = hash_df = None
 
 # Load input files
+def load_file(filepath):
+    if filepath.endswith('.tsv'):
+        delimiter = '\t'
+    else:
+        delimiter = ','
+    return pd.read_csv(filepath, delimiter=delimiter)
+
 if args.sample and not args.genomic:
-    sample_df = pd.read_csv(args.sample)
+    sample_df = load_file(args.sample)
     use_case = 'sample_only'
 elif args.genomic and not args.sample:
-    gf_df = pd.read_csv(args.genomic)
-    hash_df = pd.read_csv(args.hash)
+    gf_df = load_file(args.genomic)
+    hash_df = load_file(args.hash)
     use_case = 'genomic_only'
 elif args.sample and args.genomic:
-    sample_df = pd.read_csv(args.sample)
-    gf_df = pd.read_csv(args.genomic)
-    hash_df = pd.read_csv(args.hash)
+    sample_df = load_file(args.sample)
+    gf_df = load_file(args.genomic)
+    hash_df = load_file(args.hash)
     use_case = 'both'
 else:
     raise ValueError("Either 'sample' or 'genomic' (or both) must be provided.")
-
 
 mapping_df = args.mapping
 with open(mapping_df, 'r') as json_file:
@@ -43,7 +49,7 @@ def check_study_id(df):
         study_str = str(study_values[0])
         return study_str
     else:
-        print(f"ERROR: study_id is {study_values}")
+        print(f"ERROR: Multiple studies detected {study_values}. Please ensure that only one study is being processed at a time")
         sys.exit()
 
 ######## Check minimum required fields

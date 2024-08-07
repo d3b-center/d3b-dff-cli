@@ -93,12 +93,28 @@ To perform registration, use the registration command:
 
 ```bash
 d3b registration -h
-usage: d3b registration [-h] --input INPUT
+usage: d3b registration [-h] {run,check} ...
 
 This command handles the registration process. Please check https://github.com/d3b-center/d3b-dff-cli/data/registration/README.md for details.
 
 optional arguments:
-  -h, --help     show this help message and exit
-  --input INPUT  Path to the JSON file for registration
+  -h, --help   show this help message and exit
+
+Registration Subcommands:
+  {run,check}
+    run        Run ingest package.
+    check      Run QC step after registration.
   
+```
+###### Registration Credentials File
+To run the registration check step, you must connect to the KF DataService database. Please create a credential file at `~/.d3bcli/credentials` and include the database dbname, hostname, username and password.
+
+###### Example `~/.d3bcli/credentials`
+```bash
+[kfpostgresprd]
+hostname = kf-api-dataservice-postgres-prd-rds.cnbodenpufmp.us-east-1.rds.amazonaws.com
+dbname  = kfpostgresprd
+username = <your_username>
+password = <your_password>
+
 ```

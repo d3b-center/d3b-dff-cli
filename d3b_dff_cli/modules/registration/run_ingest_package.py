@@ -106,6 +106,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the ingest package.")
-    parser.add_argument('--input', required=True, help="Path to the JSON file for registration. Example: ")
+    parser.add_argument('--input', required=True, help="Path to the JSON file for registration.")
     args = parser.parse_args()
     main(args)

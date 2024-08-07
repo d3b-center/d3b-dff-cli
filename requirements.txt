@@ -24,3 +24,5 @@ tzdata==2023.4
 urllib3==2.1.0
 yarl==1.9.4
 black==24.4.2
+pandas==1.2.5
+kf_lib_data_ingest @ git+https://github.com/kids-first/kf-lib-data-ingest.git
