@@ -106,9 +106,9 @@ Registration Subcommands:
     create            Create a new ingest package.
     run               Run the pipeline to ingest the package.
     check             Run QC step after registration.
-    
+
 ```
-###### Registration Credentials File
+###### Registration Check Credentials File
 To run the registration check step, you must connect to the KF DataService database. Please create a credential file at `~/.d3bcli/credentials` and include the database dbname, hostname, username and password.
 
 ###### Example `~/.d3bcli/credentials`
