@@ -40,7 +40,12 @@ This process is designed to register source sample and genomic files. It require
         "tissue_type", # will become CONCEPT.BIOSPECIMEN.TISSUE_TYPE.
         "analyte_type", # will become CONCEPT.BIOSPECIMEN.ANALYTE.
         "visible", # required for every target entities.
-        "visibility_reason" # required for every target entities.
+        "visibility_reason", # required for every target entities.
+        "kf_sequence_center_id", # Optional, but required when registering sample only
+        "family_id", # Optional, but required when registering family relationship
+        "family_relationship", # Optional, but required when registering family relationship
+        "gender", # Optional, but required when registering family relationship
+        "is_proband" # Optional, but required when registering family relationship
     ],
     "source_genomics_manifest": [
         "aliquot_id", # used to connect with sample_manifest.

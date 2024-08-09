@@ -7,6 +7,7 @@ from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
+from .modules.registration.create_ingest_package import main as create_ingest_package
 from .modules.registration.run_ingest_package import main as run_ingest_package
 from .modules.registration.registration_qc import main as registration_qc
 
@@ -150,15 +151,22 @@ def main():
         title="Registration Subcommands", dest="registration_command"
     )
 
-    # Run ingest package
-    ingest_parser = registration_subparsers.add_parser(
-        "run", help="Run ingest package."
+    # Create ingest package
+    create_parser = registration_subparsers.add_parser(
+        "create", help="Create a new ingest package."
     )
-    ingest_parser.add_argument(
+    create_parser.add_argument(
         "--input",
         help="Path to the JSON file for registration",
         required=True,
     )
+    create_parser.set_defaults(func=create_ingest_package)
+
+    # Run ingest package
+    ingest_parser = registration_subparsers.add_parser(
+        "run", help="Run the pipeline to ingest the package."
+    )
+    ingest_parser.add_argument("INGEST_PACKAGE_PATH", help="Path to the data ingest package directory.")
     ingest_parser.set_defaults(func=run_ingest_package)
 
     # Registration QC step
@@ -171,7 +179,6 @@ def main():
         required=True,
     )
     qc_parser.set_defaults(func=registration_qc)
-
 
     args = parser.parse_args()
 

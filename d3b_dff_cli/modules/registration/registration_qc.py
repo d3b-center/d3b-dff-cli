@@ -38,7 +38,7 @@ def main(args):
         SELECT DISTINCT
             pt.kf_id AS participant_id,
             pt.family_id,
-            bsgf.biospecimen_id,
+            bs.kf_id AS biospecimen_id,
             segf.sequencing_experiment_id,
             gf.kf_id AS genomic_file_id
         FROM participant AS pt

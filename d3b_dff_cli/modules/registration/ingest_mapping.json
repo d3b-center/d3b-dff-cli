@@ -81,6 +81,10 @@
             "check_col": "CONCEPT.FAMILY.ID"
         },
         {
+            "class_name": "family_relationship",
+            "check_col": "CONCEPT.FAMILY_RELATIONSHIP.RELATION_FROM_1_TO_2"
+        },
+        {
             "class_name": "participant",
             "check_col": "CONCEPT.PARTICIPANT.ID"
         },
@@ -115,6 +119,11 @@
     ],
 
     "sample_metadata": [
+        {
+            "type": "keep_map",
+            "in_col": "kf_sequence_center_id",
+            "out_col": "CONCEPT.SEQUENCING.CENTER.TARGET_SERVICE_ID"
+        },
         {
             "type": "keep_map",
             "in_col": "family_id",
