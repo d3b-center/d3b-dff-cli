@@ -86,3 +86,37 @@ To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate
 ```bash
 [default]
   api_key = "<your token string>"
+```
+
+### Registration
+To perform registration, use the registration command:
+
+```bash
+d3b registration -h
+usage: d3b registration [-h] {create,run,check} ...
+
+This command handles the registration process. Please check https://github.com/d3b-center/d3b-dff-
+cli/data/registration/README.md for details.
+
+optional arguments:
+  -h, --help          show this help message and exit
+
+Registration Subcommands:
+  {create,run,check}
+    create            Create a new ingest package.
+    run               Run the pipeline to ingest the package.
+    check             Run QC step after registration.
+
+```
+###### Registration Check Credentials File
+To run the registration check step, you must connect to the KF DataService database. Please create a credential file at `~/.d3bcli/credentials` and include the database dbname, hostname, username and password.
+
+###### Example `~/.d3bcli/credentials`
+```bash
+[kfpostgresprd]
+hostname = kf-api-dataservice-postgres-prd-rds.cnbodenpufmp.us-east-1.rds.amazonaws.com
+dbname  = kfpostgresprd
+username = <your_username>
+password = <your_password>
+
+```

@@ -7,7 +7,9 @@ from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
-
+from .modules.registration.create_ingest_package import main as create_ingest_package
+from .modules.registration.run_ingest_package import main as run_ingest_package
+from .modules.registration.registration_qc import main as registration_qc
 
 def add_dewrangle_arguments(my_parser):
     """
@@ -62,7 +64,7 @@ def main():
         func=lambda args: print(f"d3b-dff-cli version {__version__}")
     )
 
-    # Validation Command
+    # Validation Commands
     validation_parser = subparsers.add_parser("validation", help="Validation commands")
     validation_subparsers = validation_parser.add_subparsers(
         title="Validation Subcommands", dest="validation_command"
@@ -137,6 +139,46 @@ def main():
         required=True,
     )
     dl_parser.set_defaults(func=download_dewrangle_job)
+
+
+    # Registration Commands
+    registration_parser = subparsers.add_parser(
+        "registration", 
+        help="Registration commands",
+        description="This command handles the registration process. Please check https://github.com/d3b-center/d3b-dff-cli/data/registration/README.md for details."
+    )
+    registration_subparsers = registration_parser.add_subparsers(
+        title="Registration Subcommands", dest="registration_command"
+    )
+
+    # Create ingest package
+    create_parser = registration_subparsers.add_parser(
+        "create", help="Create a new ingest package."
+    )
+    create_parser.add_argument(
+        "--input",
+        help="Path to the JSON file for registration",
+        required=True,
+    )
+    create_parser.set_defaults(func=create_ingest_package)
+
+    # Run ingest package
+    ingest_parser = registration_subparsers.add_parser(
+        "run", help="Run the pipeline to ingest the package."
+    )
+    ingest_parser.add_argument("INGEST_PACKAGE_PATH", help="Path to the data ingest package directory.")
+    ingest_parser.set_defaults(func=run_ingest_package)
+
+    # Registration QC step
+    qc_parser = registration_subparsers.add_parser(
+        "check", help="Run QC step after registration."
+    )
+    qc_parser.add_argument(
+        "-date",
+        help="Registration date, YYYY-MM-DD (e.g., 2024-7-20).",
+        required=True,
+    )
+    qc_parser.set_defaults(func=registration_qc)
 
     args = parser.parse_args()
 

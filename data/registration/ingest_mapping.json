@@ -1,0 +1,652 @@
+{   
+    "ingest_all_targets": [
+        {
+            "class_name": "investigator",
+            "target_concept": "CONCEPT.INVESTIGATOR"
+        },
+        {
+            "class_name": "study",
+            "target_concept": "CONCEPT.STUDY"
+        },
+        {
+            "class_name": "family",
+            "target_concept": "CONCEPT.FAMILY"
+        },
+        {
+            "class_name": "family_relationship",
+            "target_concept": "CONCEPT.FAMILY_RELATIONSHIP"
+        },
+        {
+            "class_name": "participant",
+            "target_concept": "CONCEPT.PARTICIPANT"
+        },
+        {
+            "class_name": "biospecimen",
+            "target_concept": "CONCEPT.BIOSPECIMEN"
+        },
+        {
+            "class_name": "diagnosis",
+            "target_concept": "CONCEPT.DIAGNOSIS"
+        },
+        {
+            "class_name": "biospecimen_diagnosis",
+            "target_concept": "CONCEPT.BIOSPECIMEN_DIAGNOSIS"
+        },
+        {
+            "class_name": "phenotype",
+            "target_concept": "CONCEPT.PHENOTYPE"
+        },
+        {
+            "class_name": "outcome",
+            "target_concept": "CONCEPT.OUTCOME"
+        },
+        {
+            "class_name": "sample",
+            "target_concept": "CONCEPT.SAMPLE"
+        },
+        {
+            "class_name": "sample_relationship",
+            "target_concept": "CONCEPT.SAMPLE_RELATIONSHIP"
+        },
+        {
+            "class_name": "genomic_file",
+            "target_concept": "CONCEPT.GENOMIC_FILE"
+        },
+        {
+            "class_name": "read_group",
+            "target_concept": "CONCEPT.READ_GROUP"
+        },
+        {
+            "class_name": "sequencing_experiment",
+            "target_concept": "CONCEPT.SEQUENCING"
+        },
+        {
+            "class_name": "biospecimen_genomic_file",
+            "target_concept": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE"
+        },
+        {
+            "class_name": "read_group_genomic_file",
+            "target_concept": "CONCEPT.READ_GROUP_GENOMIC_FILE"
+        },
+        {
+            "class_name": "sequencing_experiment_genomic_file",
+            "target_concept": "CONCEPT.SEQUENCING_GENOMIC_FILE"
+        }
+
+    ],
+    
+    "available_ingest_targets":[
+        {
+            "class_name": "family",
+            "check_col": "CONCEPT.FAMILY.ID"
+        },
+        {
+            "class_name": "family_relationship",
+            "check_col": "CONCEPT.FAMILY_RELATIONSHIP.RELATION_FROM_1_TO_2"
+        },
+        {
+            "class_name": "participant",
+            "check_col": "CONCEPT.PARTICIPANT.ID"
+        },
+        {
+            "class_name": "biospecimen",
+            "check_col": "CONCEPT.BIOSPECIMEN.ID"
+        },
+        {
+            "class_name": "diagnosis",
+            "check_col": "CONCEPT.DIAGNOSIS.NAME"
+        },
+        {
+            "class_name": "biospecimen_diagnosis",
+            "check_col": "CONCEPT.DIAGNOSIS.NAME"
+        },
+        {
+            "class_name": "sequencing_experiment",
+            "check_col": "CONCEPT.SEQUENCING.ID"
+        },
+        {
+            "class_name": "genomic_file",
+            "check_col": "CONCEPT.GENOMIC_FILE.ID"
+        },
+        {
+            "class_name": "biospecimen_genomic_file",
+            "check_col": "CONCEPT.GENOMIC_FILE.ID"
+        },
+        {
+            "class_name": "sequencing_experiment_genomic_file",
+            "check_col": "CONCEPT.GENOMIC_FILE.ID"
+        }
+    ],
+
+    "sample_metadata": [
+        {
+            "type": "keep_map",
+            "in_col": "kf_sequence_center_id",
+            "out_col": "CONCEPT.SEQUENCING.CENTER.TARGET_SERVICE_ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "family_id",
+            "out_col": "CONCEPT.FAMILY.ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "subject_id",
+            "out_col": "CONCEPT.PARTICIPANT.ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "is_proband",
+            "out_col": "CONCEPT.PARTICIPANT.IS_PROBAND"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "is_affected",
+            "out_col": "CONCEPT.PARTICIPANT.IS_AFFECTED_UNDER_STUDY"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "gender",
+            "out_col": "CONCEPT.PARTICIPANT.GENDER"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "race",
+            "out_col": "CONCEPT.PARTICIPANT.RACE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "ethnicity",
+            "out_col": "CONCEPT.PARTICIPANT.ETHNICITY"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "sample_id",
+            "out_col": "CONCEPT.BIOSPECIMEN_GROUP.ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "aliquot_id",
+            "out_col": "CONCEPT.BIOSPECIMEN.ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "tissue_type",
+            "out_col": "CONCEPT.BIOSPECIMEN.TISSUE_TYPE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "analyte_type",
+            "out_col": "CONCEPT.BIOSPECIMEN.ANALYTE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "composition",
+            "out_col": "CONCEPT.BIOSPECIMEN.COMPOSITION"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "age_at_collection_days",
+            "out_col": "CONCEPT.BIOSPECIMEN.EVENT_AGE_DAYS"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "method_of_sample_procurement",
+            "out_col": "CONCEPT.BIOSPECIMEN.SAMPLE_PROCUREMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "preservation_method",
+            "out_col": "CONCEPT.BIOSPECIMEN.PRESERVATION_METHOD"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "sample_anatomic_site",
+            "out_col": "CONCEPT.BIOSPECIMEN.ANATOMY_SITE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "tumor_descriptor",
+            "out_col": "CONCEPT.BIOSPECIMEN.TUMOR_DESCRIPTOR"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "shipment_origin",
+            "out_col": "CONCEPT.BIOSPECIMEN.SHIPMENT_ORIGIN"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "shipment_date",
+            "out_col": "CONCEPT.BIOSPECIMEN.SHIPMENT_DATE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "volume_ul",
+            "out_col": "CONCEPT.BIOSPECIMEN.VOLUME_UL"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "spatial_descriptor",
+            "out_col": "CONCEPT.BIOSPECIMEN.SPATIAL_DESCRIPTOR"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "diagnosis",
+            "out_col": "CONCEPT.DIAGNOSIS.NAME"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "diagnosis_category",
+            "out_col": "CONCEPT.DIAGNOSIS.CATEGORY"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "tumor_location",
+            "out_col": "CONCEPT.DIAGNOSIS.TUMOR_LOCATION"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.FAMILY.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.FAMILY.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.FAMILY.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.PARTICIPANT.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.PARTICIPANT.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.PARTICIPANT.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.BIOSPECIMEN.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.BIOSPECIMEN.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.BIOSPECIMEN.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.DIAGNOSIS.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.DIAGNOSIS.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.DIAGNOSIS.VISIBILITY_COMMENT"
+        }
+    ],
+
+    "source_genomics_metadata": [
+        {
+            "type": "keep_map",
+            "in_col": "aliquot_id",
+            "out_col": "CONCEPT.BIOSPECIMEN.ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "file_path",
+            "out_col": "CONCEPT.GENOMIC_FILE.ID"
+        },
+        {
+            "type": "value_map",
+            "in_col": "file_path",
+            "m": "lambda x: [f'{x}']",
+            "out_col": "CONCEPT.GENOMIC_FILE.URL_LIST"
+        },
+        {
+            "type": "value_map",
+            "in_col": "file_path",
+            "m": "fname",
+            "out_col": "CONCEPT.GENOMIC_FILE.FILE_NAME"
+        },
+        {
+            "type": "value_map",
+            "in_col": "file_format",
+            "m": "file_format",
+            "out_col": "CONCEPT.GENOMIC_FILE.FILE_FORMAT"
+        },
+        {
+            "type": "constant_map",
+            "m": "constants.COMMON.TRUE",
+            "out_col": "CONCEPT.GENOMIC_FILE.CONTROLLED_ACCESS"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "reference_genome",
+            "out_col": "CONCEPT.GENOMIC_FILE.REFERENCE_GENOME"
+        },
+        {
+            "type": "constant_map",
+            "m": "constants.GENOMIC_FILE.AVAILABILITY.IMMEDIATE",
+            "out_col": "CONCEPT.GENOMIC_FILE.AVAILABILITY"
+        },
+        {
+            "type": "constant_map",
+            "m": "constants.COMMON.FALSE",
+            "out_col": "CONCEPT.GENOMIC_FILE.HARMONIZED"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "sequencing_id",
+            "out_col": "CONCEPT.SEQUENCING.ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "platform",
+            "out_col": "CONCEPT.SEQUENCING.PLATFORM"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "instrument_model",
+            "out_col": "CONCEPT.SEQUENCING.INSTRUMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "experiment_strategy",
+            "out_col": "CONCEPT.SEQUENCING.STRATEGY"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "target_capture_kit_link",
+            "out_col": "CONCEPT.SEQUENCING.TARGET_CAPTURE_KIT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "target_capture_kit_link",
+            "out_col": "CONCEPT.SEQUENCING.PAIRED_END"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "is_paired_end",
+            "out_col": "CONCEPT.SEQUENCING.PAIRED_END"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "mean_coverage",
+            "out_col": "CONCEPT.SEQUENCING.MEAN_DEPTH"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "kf_sequence_center_id",
+            "out_col": "CONCEPT.SEQUENCING.CENTER.TARGET_SERVICE_ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "total_reads",
+            "out_col": "CONCEPT.SEQUENCING.TOTAL_READS"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "library_strand",
+            "out_col": "CONCEPT.SEQUENCING.LIBRARY_STRAND"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "library_prep",
+            "out_col": "CONCEPT.SEQUENCING.LIBRARY_PREP"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "library_selection",
+            "out_col": "CONCEPT.SEQUENCING.LIBRARY_SELECTION"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "library_name",
+            "out_col": "CONCEPT.SEQUENCING.LIBRARY_NAME"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "target_capture_kit_link",
+            "out_col": "CONCEPT.SEQUENCING.TARGET_CAPTURE_KIT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.SEQUENCING.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.SEQUENCING.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.SEQUENCING.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.GENOMIC_FILE.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.GENOMIC_FILE.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.GENOMIC_FILE.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.SEQUENCING_GENOMIC_FILE.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.SEQUENCING_GENOMIC_FILE.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.SEQUENCING_GENOMIC_FILE.VISIBILITY_COMMENT"
+        }
+    ],
+
+    "harmonized_genomics_metadata": [
+        {
+            "type": "value_map",
+            "in_col": "biospecimen_id",
+            "m": "lambda x: Split(re.split('[;]', x))",
+            "out_col": "CONCEPT.BIOSPECIMEN.TARGET_SERVICE_ID"
+        },
+        {
+            "type": "value_map",
+            "in_col": "sequencing_experiment_id",
+            "m": "lambda x: Split(re.split('[;]', x))",
+            "out_col": "CONCEPT.SEQUENCING.TARGET_SERVICE_ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "file_path",
+            "out_col": "CONCEPT.GENOMIC_FILE.ID"
+        },
+        {
+            "type": "value_map",
+            "in_col": "file_path",
+            "m": "lambda x: [f'{x}']",
+            "out_col": "CONCEPT.GENOMIC_FILE.URL_LIST"
+        },
+        {
+            "type": "value_map",
+            "in_col": "file_path",
+            "m": "fname",
+            "out_col": "CONCEPT.GENOMIC_FILE.FILE_NAME"
+        },
+        {
+            "type": "value_map",
+            "in_col": "file_format",
+            "m": "file_format",
+            "out_col": "CONCEPT.GENOMIC_FILE.FILE_FORMAT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "data_type",
+            "out_col": "CONCEPT.GENOMIC_FILE.DATA_TYPE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "data_category",
+            "out_col": "CONCEPT.GENOMIC_FILE.DATA_CATEGORY"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "workflow_type",
+            "out_col": "CONCEPT.GENOMIC_FILE.WORKFLOW_TYPE"
+        }, 
+        {
+            "type": "keep_map",
+            "in_col": "workflow_tool",
+            "out_col": "CONCEPT.GENOMIC_FILE.WORKFLOW_TOOL"
+        }, 
+        {
+            "type": "keep_map",
+            "in_col": "workflow_version",
+            "out_col": "CONCEPT.GENOMIC_FILE.WORKFLOW_VERSION"
+        }, 
+        {
+            "type": "keep_map",
+            "in_col": "file_version_descriptor",
+            "out_col": "CONCEPT.GENOMIC_FILE.FILE_VERSION_DESCRIPTOR"
+        }, 
+        {
+            "type": "keep_map",
+            "in_col": "reference_genome",
+            "out_col": "CONCEPT.GENOMIC_FILE.REFERENCE_GENOME"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "controlled_access",
+            "out_col": "CONCEPT.GENOMIC_FILE.CONTROLLED_ACCESS"
+        },
+        {
+            "type": "constant_map",
+            "m": "constants.GENOMIC_FILE.AVAILABILITY.IMMEDIATE",
+            "out_col": "CONCEPT.GENOMIC_FILE.AVAILABILITY"
+        },
+        {
+            "type": "constant_map",
+            "m": "constants.COMMON.TRUE",
+            "out_col": "CONCEPT.GENOMIC_FILE.HARMONIZED"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.GENOMIC_FILE.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.GENOMIC_FILE.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.GENOMIC_FILE.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.BIOSPECIMEN_GENOMIC_FILE.VISIBILITY_COMMENT"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visible",
+            "out_col": "CONCEPT.SEQUENCING_GENOMIC_FILE.VISIBLE"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_reason",
+            "out_col": "CONCEPT.SEQUENCING_GENOMIC_FILE.VISIBILTIY_REASON"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "visibility_comment",
+            "out_col": "CONCEPT.SEQUENCING_GENOMIC_FILE.VISIBILITY_COMMENT"
+        }
+    ],
+
+    "hash_metadata":[
+        {
+            "type": "keep_map",
+            "in_col": "uri",
+            "out_col": "CONCEPT.GENOMIC_FILE.ID"
+        },
+
+        {
+            "type": "keep_map",
+            "in_col": "sizeInBytes",
+            "out_col": "CONCEPT.GENOMIC_FILE.SIZE"
+        },
+        {
+            "type": "row_map",
+            "out_col": "CONCEPT.GENOMIC_FILE.HASH_DICT",
+            "m": {
+              "etag": "constants.FILE.HASH.S3_ETAG.lower(): x['etag']",
+              "md5": "constants.FILE.HASH.MD5.lower(): x['md5']",
+              "sha1": "constants.FILE.HASH.SHA1.lower(): x['sha1']",
+              "sha256": "constants.FILE.HASH.SHA256.lower(): x['sha256']",
+              "sha512": "constants.FILE.HASH.SHA512.lower(): x['sha512']"
+            }
+        }
+    ]
+}

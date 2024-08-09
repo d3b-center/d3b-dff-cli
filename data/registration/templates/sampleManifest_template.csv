@@ -1,0 +1,5 @@
+study_id,kf_sequence_center_id,subject_id,family_id,family_relationship,is_proband,sample_id,aliquot_id,tissue_type,analyte_type,composition,gender,race,ethnicity,diagnosis_category,diagnosis,age_at_diagnosis_days,age_at_collection_days,is_proband,phenotype,is_affected,tumor_location,tumor_descriptor,sample_anatomic_site,preservation_method,shipment_origin,shipment_date,volume_ul,visible,visibility_reason,visibility_comment
+SD_S9AGK8XV,SC_V4CCQ3WE,TESTID_P1,TESTFAM,Mother,FALSE,20240808,20240808,Normal,DNA,,Female,,,,,,3270,,,,,,,,,,,FALSE,Other,
+SD_S9AGK8XV,SC_V4CCQ3WE,TESTID_P2,TESTFAM,Father,FALSE,20240809,20240809,Normal,DNA,,Male,,,,,,3270,,,,,,,,,,,FALSE,Other,
+SD_S9AGK8XV,SC_V4CCQ3WE,TESTID,TESTFAM,Proband,TRUE,20240810,20240810,Normal,DNA,,Male,,,,,,3270,,,,,,,,,,,FALSE,Other,
+SD_S9AGK8XV,SC_V4CCQ3WE,TESTID_R1,TESTFAM,Sibling,FALSE,20240811,20240811,Normal,DNA,,Male,,,,,,3270,,,,,,,,,,,FALSE,Other,
