@@ -48,7 +48,10 @@ def add_dewrangle_arguments(my_parser):
     return my_parser
 
 
-def main():
+def create_parser():
+    """
+    Create the main parser for the d3b-dff-cli command-line interface.
+    """
     parser = argparse.ArgumentParser(
         description="A command-line interface for d3b-dff-cli."
     )
@@ -138,6 +141,15 @@ def main():
     )
     dl_parser.set_defaults(func=download_dewrangle_job)
 
+    return parser
+
+def main():
+    """
+    Main function, create argument parser, provide help messages, and call appropriate function.
+    """
+    # create parser
+    parser = create_parser()
+
     args = parser.parse_args()
 
     # if no arguments given, print help message
@@ -145,6 +157,7 @@ def main():
         parser.print_help(sys.stderr)
         sys.exit(1)
 
+    # if function exists, call function. else fail and print error message
     if hasattr(args, "func"):
         args.func(args)
     else:
