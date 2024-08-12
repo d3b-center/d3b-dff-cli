@@ -141,6 +141,18 @@ def create_parser():
     )
     dl_parser.set_defaults(func=download_dewrangle_job)
 
+    # Intake commands
+    # request: create data transfer intake epic
+    intake_parser = subparsers.add_parser("intake", help="Intake commands")
+    intake_subparsers = intake_parser.add_subparsers(
+        title="Intake Subcommands", dest="intake_command"
+    )
+
+    # request subcommand
+    request_parser = intake_subparsers.add_parser(
+        "request", help="Create data transfer to epic in Jira"
+    )
+
     return parser
 
 def main():
