@@ -7,6 +7,7 @@ from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
+from .modules.intake.request import main as intake_request
 
 
 def add_dewrangle_arguments(my_parser):
@@ -114,7 +115,9 @@ def create_parser():
     )
 
     # hash subcommand
-    hash_parser = dewrangle_subparsers.add_parser("hash", help="Hash volume in Dewrangle")
+    hash_parser = dewrangle_subparsers.add_parser(
+        "hash", help="Hash volume in Dewrangle"
+    )
     hash_parser = add_dewrangle_arguments(hash_parser)
     hash_parser.set_defaults(func=hash_volume)
 
@@ -152,8 +155,42 @@ def create_parser():
     request_parser = intake_subparsers.add_parser(
         "request", help="Create data transfer to epic in Jira"
     )
+    ## add intake request arguments
+    request_parser.add_argument(
+        "-auth",
+        help="Base64 encoded Jira username and password",
+        required=True,
+    )
+    request_parser.add_argument(
+        "-jira_url",
+        help="Jira url",
+        required=True,
+    )
+    # need study, data_source, program, summary, prd, post
+    request_parser.add_argument("-study", help="KF study name", required=True)
+    request_parser.add_argument("-data_source", help="Data source name", required=True)
+    request_parser.add_argument("-program", help="Program name", required=True)
+    request_parser.add_argument(
+        "-summary", help="Optional summary for epic, overrides default", required=False
+    )
+    request_parser.add_argument(
+        "-prd",
+        help="Optional, remove TEST from summary, default false",
+        required=False,
+        default=False,
+        action="store_true",
+    )
+    request_parser.add_argument(
+        "-post",
+        help="Optional, actually post request and make epic, default: dump json payload",
+        required=False,
+        default=False,
+        action="store_true",
+    )
+    request_parser.set_defaults(func=intake_request)
 
     return parser
+
 
 def main():
     """
