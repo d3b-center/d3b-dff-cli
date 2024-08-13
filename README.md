@@ -88,9 +88,17 @@ To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate
   api_key = "<your token string>"
 ```
 
-### Jira
+### Intake
+Create Data Transfer Intake epic
+```bash
+d3b intake
+Subparser 'intake'
+usage: d3b intake [-h] {request} ...
 
-This isn't included as an option on the command line, and is only available as importable functions. The main function is `add_jira_comment` which adds a provided message as a comment to the provided ticket.
+optional arguments:
+  -h, --help  show this help message and exit
 
-
-This functionality was added here so that it can be used in the lambdas that are being used by the [Data Transfer step function](https://github.com/d3b-center/d3b-dff-data-transfer-pipeline). It was decided that each step in the step function will add a comment to the data transfer Jira ticket to track the status of the step function. For futher information, please see https://d3b.atlassian.net/browse/D3B-595.
+Intake Subcommands:
+  {request}
+    request   Create data transfer to epic in Jira
+```
