@@ -1,7 +1,9 @@
-"""Add comment to Jira ticket"""
+"""Create data intake epic in Jira"""
 import json
 import urllib3
 import logging
+import time
+from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -21,7 +23,8 @@ def check_status(response):
         logger.error(
             f"Failed to update Jira ticket: {response.status} - {response.data}"
         )
-    
+        exit(1)
+
     return
 
 
@@ -30,7 +33,7 @@ def intake_request(args):
     Create data intake epic and return epic and transfer ticket ids.
 
     Input:
-    
+    - args (argparse.Namespace): Parsed command-line arguments
 
     Output:
     - epic_id (str): Epic ID
@@ -41,9 +44,9 @@ def intake_request(args):
     intake_epic_id = 10231
 
     # jira internal id for AD project
-    project_id = 101475
+    project_id = 10147
 
-    epic_key, transfer_key = [0,0]
+    epic_key, transfer_key = ["AD-0", "AD-0"]
 
     http = urllib3.PoolManager()
 
@@ -66,24 +69,26 @@ def intake_request(args):
     #   get metadata from https://d3b.atlassian.net/rest/api/3/issue/createmeta/10147/issuetypes/10231
     #   find name retrun id
     #   if not, return unknown (or something like unknown)
-    
-    study_id = 10412 # Unknown Study
+
+    study_id = "10412"  # Unknown Study
     if args.study == "DGD":
-        study_id = 10298
+        study_id = "10298"
 
-    data_source_id = 10413  # Source Not Listed - Please Add New Source
+    data_source_id = "10413"  # Source Not Listed - Please Add New Source
     if args.data_source == "CHOP DGD":
-        data_source_id = 10358
+        data_source_id = "10358"
 
-    program_id = 10380 # D3B
+    program_id = "10380"  # D3B
     if args.program == "CHOP":
-        program_id = 10386
+        program_id = "10386"
+
+    date = datetime.now()
 
     summary = None
     if args.summary:
         summary = args.summary
     else:
-        summary = "TEMP: Data Intake Request"
+        summary = f"{args.study} data intake from {args.data_source} - {date}"
 
     if not args.prd:
         summary = f"TEST {summary}"
@@ -94,27 +99,27 @@ def intake_request(args):
                 "project": {"id": project_id},
                 "issuetype": {"id": intake_epic_id},
                 "summary": summary,
-                study_field_key: {"id": study_id},
+                study_field_key: [{"id": study_id}],
                 data_source_field_key: {"id": data_source_id},
-                program_field_key: {"id": program_id}
+                program_field_key: {"id": program_id},
             }
         }
     ).encode("utf-8")
 
-    if args.submit:
+    if args.post:
         response = http.request("POST", url, body=payload, headers=headers)
 
         check_status(response)
 
-        # process response
-        print(json.dumps(json.loads(response.text), sort_keys=True))
-
         # extract epic id and transfer id
-        epic_key = json.loads(response.text)["key"]
+        epic_key = json.loads(response.data)["key"]
 
         # get transfer key from epic key
         epic_proj, epic_num = epic_key.split("-")
         transfer_key = f"{epic_proj}-{int(epic_num)+1}"
+
+        # wait before checking if transfer ticket exists
+        time.sleep(5)
 
         # query that transfer ticket exists (extra check that this worked)
         ticket_url = f"{args.jira_url}/rest/api/3/issue/{transfer_key}"
@@ -125,15 +130,16 @@ def intake_request(args):
         print("Dry run, no request submitted")
         print("-----------------------------")
         print(json.dumps(json.loads(payload), sort_keys=True))
+        print("-----------------------------")
 
     return epic_key, transfer_key
 
 
 def main(args):
     """Main function."""
-    epic_id, transfer_id = intake_request(args)
+    epic_key, transfer_key = intake_request(args)
 
-    print(f"Epic ID: {epic_id}")
-    print(f"Transfer Ticket ID: {transfer_id}")
+    print(f"Epic ID: {epic_key}")
+    print(f"Transfer Ticket ID: {transfer_key}")
 
     return
