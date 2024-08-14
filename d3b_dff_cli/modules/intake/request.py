@@ -1,4 +1,5 @@
 """Create data intake epic in Jira"""
+
 import json
 import urllib3
 import logging
@@ -26,6 +27,41 @@ def check_status(response):
         exit(1)
 
     return
+
+
+def convert_keys_to_id(key, field, meta_res):
+    """
+    Convert text key to value id.
+    Set default values based on "Unknown" or similar value for field.
+    Loop through allowed values to find match and return id.
+
+    Inputs:
+    - key (str): Text key to convert
+    - field (str): Field name
+    - meta_res (urllib3.response.HTTPResponse): Response from Jira API
+
+    Returns:
+    - field_id (str): ID of allowed value
+    """
+
+    # set up defaults
+    default_ids = {
+        "Study": "10412",  # Unknown
+        "Data Source": "10413",  # Source Not Listed - Please Add New Source
+        "Program": "10380",  # D3B
+    }
+
+    field_id = default_ids[field]
+
+    meta_data = json.loads(meta_res.data)
+
+    for ticket_field in meta_data["fields"]:
+        if ticket_field["name"] == field:
+            for option in ticket_field["allowedValues"]:
+                if option["value"] == key:
+                    field_id = option["id"]
+
+    return field_id
 
 
 def intake_request(args):
@@ -62,37 +98,32 @@ def intake_request(args):
     data_source_field_key = "customfield_10139"
     program_field_key = "customfield_10140"
 
-    # translate between text and custom field id
-    # can we do this via query????
-    # probably can, but not for MVP
-    # rough plan:
-    #   get metadata from https://d3b.atlassian.net/rest/api/3/issue/createmeta/10147/issuetypes/10231
-    #   find name retrun id
-    #   if not, return unknown (or something like unknown)
+    # translate between text and custom field allowed value id
 
-    study_id = "10412"  # Unknown Study
-    if args.study == "DGD":
-        study_id = "10298"
+    # get issue type fields and required values
+    meta_url = f"{args.jira_url}/rest/api/3/issue/createmeta/{project_id}/issuetypes/{intake_epic_id}"
+    meta_res = http.request("GET", meta_url, headers=headers)
+    check_status(meta_res)
 
-    data_source_id = "10413"  # Source Not Listed - Please Add New Source
-    if args.data_source == "CHOP DGD":
-        data_source_id = "10358"
-
-    program_id = "10380"  # D3B
-    if args.program == "CHOP":
-        program_id = "10386"
+    # convert from text to allowed value id
+    study_id = convert_keys_to_id(args.study, "Study", meta_res)
+    data_source_id = convert_keys_to_id(args.data_source, "Data Source", meta_res)
+    program_id = convert_keys_to_id(args.program, "Program", meta_res)
 
     date = datetime.now()
 
+    # override default summary if args.summary provided
     summary = None
     if args.summary:
         summary = args.summary
     else:
         summary = f"{args.study} data intake from {args.data_source} - {date}"
 
+    # add test label if not prd
     if not args.prd:
         summary = f"TEST {summary}"
 
+    # build post json
     payload = json.dumps(
         {
             "fields": {
@@ -106,6 +137,7 @@ def intake_request(args):
         }
     ).encode("utf-8")
 
+    # if args.post, post and make epic
     if args.post:
         response = http.request("POST", url, body=payload, headers=headers)
 
