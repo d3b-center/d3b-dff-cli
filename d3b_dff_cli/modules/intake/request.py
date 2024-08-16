@@ -64,16 +64,16 @@ def convert_keys_to_id(key, field, meta_res):
     return field_id
 
 
-def intake_request(args):
+def intake_request(args, headers):
     """
     Create data intake epic and return epic and transfer ticket ids.
 
     Input:
     - args (argparse.Namespace): Parsed command-line arguments
+    - headers (dict): HTTP headers for Jira API requests
 
     Output:
-    - epic_id (str): Epic ID
-    - transfer_id (str): Transfer ID
+    - epic_key (str): Epic ticket key (colloquially called Epic ID)
     """
 
     # jira internal id for the data intake epic
@@ -82,14 +82,9 @@ def intake_request(args):
     # jira internal id for AD project
     project_id = 10147
 
-    epic_key, transfer_key = ["AD-0", "AD-0"]
+    epic_key = None
 
     http = urllib3.PoolManager()
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Basic {args.auth}",
-    }
 
     url = f"{args.jira_url}/rest/api/3/issue/"
 
@@ -146,17 +141,8 @@ def intake_request(args):
         # extract epic id and transfer id
         epic_key = json.loads(response.data)["key"]
 
-        # get transfer key from epic key
-        epic_proj, epic_num = epic_key.split("-")
-        transfer_key = f"{epic_proj}-{int(epic_num)+1}"
-
         # wait before checking if transfer ticket exists
         time.sleep(5)
-
-        # query that transfer ticket exists (extra check that this worked)
-        ticket_url = f"{args.jira_url}/rest/api/3/issue/{transfer_key}"
-        response = http.request("GET", ticket_url, headers=headers)
-        check_status(response)
 
     else:
         print("Dry run, no request submitted")
@@ -164,14 +150,58 @@ def intake_request(args):
         print(json.dumps(json.loads(payload), sort_keys=True))
         print("-----------------------------")
 
-    return epic_key, transfer_key
+    return epic_key
+
+
+def get_transfer_key(epic_key, headers, jira_url):
+    """
+    Get transfer ticket id from epic.
+
+    Input:
+    - epic_key (str): Epic ticket key
+    - headers (dict): HTTP headers for Jira API requests
+    - jira_url (str): Base URL for Jira instance
+
+    Output:
+    - transfer_key (str): Transfer ticket key
+    """
+
+    transfer_key = None
+
+    http = urllib3.PoolManager()
+
+    # find issues where the parent is the epic_key
+    query_url = f"{jira_url}/rest/api/3/search?jql=(parent = {epic_key})"
+
+    response = http.request("GET", query_url, headers=headers)
+    check_status(response)
+
+    query_data = json.loads(response.data)
+
+    print(query_url)
+
+    # loop through fields to find transfer ticket
+    for issue in query_data["issues"]:
+        if "Data Transfer - " in issue["fields"]["summary"]:
+            transfer_key = issue["key"]
+
+    if transfer_key is None:
+        logger.warning("Transfer ticket not found")
+
+    return transfer_key
 
 
 def main(args):
     """Main function."""
-    epic_key, transfer_key = intake_request(args)
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Basic {args.auth}",
+    }
+    epic_key = intake_request(args, headers)
 
-    print(f"Epic ID: {epic_key}")
-    print(f"Transfer Ticket ID: {transfer_key}")
+    if epic_key:
+        transfer_key = get_transfer_key(epic_key, headers, args.jira_url)
+        print(f"Epic ID: {epic_key}")
+        print(f"Transfer Ticket ID: {transfer_key}")
 
     return
