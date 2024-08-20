@@ -68,7 +68,7 @@ def validate_row(row, rules):
                                     error_messages.append(f"Warning: *{col}* less than {greater_than_value}")
 
                             except ValueError:
-                                error_messages.append(f"*{col}*: {fize_size_str} is not a valid numeric value")
+                                error_messages.append(f"*{col}*: {fize_size_str} is not a valid value")
 
     if error_messages:
         return False, error_messages  # Return all error messages for this row
