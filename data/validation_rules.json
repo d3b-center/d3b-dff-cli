@@ -125,7 +125,7 @@
       "consequences": [
         {
           "column": "file_size",
-          "greater_than": "1 GB",
+          "greater_than": "200M",
           "valid": true
         }
       ]
@@ -377,7 +377,7 @@
       "consequences": [
         {
           "column": "file_size",
-          "greater_than": "1 GB",
+          "greater_than": "200M",
           "valid": true
         }
       ]

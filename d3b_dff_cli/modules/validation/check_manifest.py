@@ -1,6 +1,7 @@
 import json
 import argparse
 import pandas as pd
+import re
 
 # Define a function to perform validation
 def validate_row(row, rules):
@@ -18,7 +19,11 @@ def validate_row(row, rules):
                 op_value = consequence.get("equals")
                 is_empty = consequence.get("empty")
                 
-                cell_value = str(row.get(col)).lower()
+                cell_value = row.get(col)
+                if is_empty and pd.isna(cell_value):
+                    error_messages.append(f"*{col}*: cannot be empty.")
+                else:
+                    cell_value = str(cell_value).lower()
 
                 if op_value != "" and op_value is not None:
                     allowed_values = op_value.split(",")
@@ -29,9 +34,6 @@ def validate_row(row, rules):
                         if cell_value != op_value.lower():
                             error_messages.append(f"*{col}*: must be {op_value}.")
 
-                if is_empty and not cell_value:
-                    error_messages.append(f"*{col}*: cannot be empty.")
-                
                 # Check if file_name ends with a valid extension
                 if col == "file_name" and "ends_with" in consequence:
                     format = conditions[0].get("equals")
@@ -43,14 +45,30 @@ def validate_row(row, rules):
                 if col == "file_size" and row.get("file_format", "").lower() in ["fastq", "bam", "cram"]:
                     greater_than_value = consequence.get("greater_than")
                     if greater_than_value:
-                        try:
-                            file_size_in_gb = float(row.get(col, 0)) / (1024 * 1024 * 1024)  # Convert to GB
-                            if file_size_in_gb <= float(greater_than_value.rstrip(" GB")):
-                                error_messages.append(f"Warning: *{col}* less than {greater_than_value}")
-                        except ValueError:
-                            error_messages.append(f"*{col}* is not a valid numeric value")
+                        experiment = row.get("experiment_strategy", "").lower()
+                        if experiment in ["wgs", "wxs", "wes"]:
+                            greater_than_value = "1 GB"
+                            minum_value = 1_000_000_000 # WGS/WXS should be greater than 1G
+                        else:
+                            greater_than_value = consequence.get("greater_than")
+                            minum_value = float(greater_than_value.rstrip("M"))*1000_000 # Other experimental strategy should be greater than the specified value.
+                        
+                        if pd.notna(cell_value):
+                            fize_size_str = str(cell_value).lower()
 
+                            # support file size formats in bytes, megabytes, and gigabytes: 100, 100M, 100MB, 10G, 10GB
+                            try:
+                                if 'm' in fize_size_str:
+                                    size_byte = float(re.sub('[^0-9.]', '', fize_size_str)) * 1_000_000
+                                elif 'g' in fize_size_str:
+                                    size_byte = float(re.sub('[^0-9.]', '', fize_size_str)) * 1_000_000_000
+                                else:
+                                    size_byte = float(fize_size_str)
+                                if size_byte < minum_value:
+                                    error_messages.append(f"Warning: *{col}* less than {greater_than_value}")
 
+                            except ValueError:
+                                error_messages.append(f"*{col}*: {fize_size_str} is not a valid numeric value")
 
     if error_messages:
         return False, error_messages  # Return all error messages for this row
