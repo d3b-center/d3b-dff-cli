@@ -1,4 +1,4 @@
-"""Create data intake epic in Jira"""
+"""Create Jira ticket with allowed values"""
 
 import json
 import urllib3
@@ -29,6 +29,42 @@ def check_status(response):
     return
 
 
+def get_project_issue_type_ids(project, issue_type, jira_url, headers):
+    """
+    Get issue type id from project. Also checks if project exists.
+
+    Inputs:
+    - project (str): Jira project name
+    - issue_type (str): Jira issue type name
+    - jira_url (str): Jira base URL
+    - headers (dict): HTTP headers for Jira API requests
+
+    Returns:
+    - project_id (str): project id
+    - issue_type_id (str): issue type id
+    """
+
+    project_id = None
+    issue_type_id = None
+
+    # check if project exists
+    http = urllib3.PoolManager()
+    url = f"{jira_url}/rest/api/3/project/{project}"
+    res = http.request("GET", url, headers=headers)
+    check_status(res)
+
+    data = json.loads(res.data)
+
+    project_id = data["id"]
+
+    # loop through issue types and check if issue type exists in project
+    for it in data["issueTypes"]:
+        if it["name"] == issue_type:
+            issue_type_id = it["id"]
+
+    return project_id, issue_type_id
+
+
 def convert_keys_to_id(key, field, meta_res):
     """
     Convert text key to value id.
@@ -44,14 +80,7 @@ def convert_keys_to_id(key, field, meta_res):
     - field_id (str): ID of allowed value
     """
 
-    # set up defaults
-    default_ids = {
-        "Study": "10412",  # Unknown
-        "Data Source": "10413",  # Source Not Listed - Please Add New Source
-        "Program": "10380",  # D3B
-    }
-
-    field_id = default_ids[field]
+    field_id = None
 
     meta_data = json.loads(meta_res.data)
 
@@ -64,82 +93,126 @@ def convert_keys_to_id(key, field, meta_res):
     return field_id
 
 
-def intake_request(args, headers):
+def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, headers):
     """
-    Create data intake epic and return epic and transfer ticket ids.
+    Create Jira ticket with provided fields
 
     Input:
-    - args (argparse.Namespace): Parsed command-line arguments
+    - project_id (str): Jira project id
+    - issue_type_id (str): Jira issue type id
+    - fields (dict): Dictionary of issue fields
+    - post (bool): If true, actually post request
+    - prd (bool): If true, remove TEST from summary
+    - jira_url (str): Jira base URL
     - headers (dict): HTTP headers for Jira API requests
 
     Output:
-    - epic_key (str): Epic ticket key (colloquially called Epic ID)
+    - ticket_key (str): Ticket key (colloquially called Ticket ID)
     """
 
-    # jira internal id for the data intake epic
-    intake_epic_id = 10231
-
-    # jira internal id for AD project
-    project_id = 10147
-
-    epic_key = None
+    ticket_key = None
 
     http = urllib3.PoolManager()
 
-    url = f"{args.jira_url}/rest/api/3/issue/"
-
-    # Required cutom fields:
-    study_field_key = "customfield_10136"
-    data_source_field_key = "customfield_10139"
-    program_field_key = "customfield_10140"
-
-    # translate between text and custom field allowed value id
-
-    # get issue type fields and required values
-    meta_url = f"{args.jira_url}/rest/api/3/issue/createmeta/{project_id}/issuetypes/{intake_epic_id}"
-    meta_res = http.request("GET", meta_url, headers=headers)
-    check_status(meta_res)
-
-    # convert from text to allowed value id
-    study_id = convert_keys_to_id(args.study, "Study", meta_res)
-    data_source_id = convert_keys_to_id(args.data_source, "Data Source", meta_res)
-    program_id = convert_keys_to_id(args.program, "Program", meta_res)
+    url = f"{jira_url}/rest/api/3/issue/"
 
     date = datetime.now()
 
-    # override default summary if args.summary provided
-    summary = None
-    if args.summary:
-        summary = args.summary
-    else:
-        summary = f"{args.study} data intake from {args.data_source} - {date}"
+    payload = None
 
-    # add test label if not prd
-    if not args.prd:
-        summary = f"TEST {summary}"
+    # figure out what fields are in the issue being created
+    meta_url = f"{jira_url}/rest/api/3/issue/createmeta/{project_id}/issuetypes/{issue_type_id}"
+    meta_res = http.request("GET", meta_url, headers=headers)
+    check_status(meta_res)
 
-    # build post json
-    payload = json.dumps(
-        {
-            "fields": {
-                "project": {"id": project_id},
-                "issuetype": {"id": intake_epic_id},
-                "summary": summary,
-                study_field_key: [{"id": study_id}],
-                data_source_field_key: {"id": data_source_id},
-                program_field_key: {"id": program_id},
-            }
-        }
-    ).encode("utf-8")
+    # turn ticket fields to dict
+    fields_json = json.loads(meta_res.data)["fields"]
+    ticket_fields = {}
+    for ticket_field in fields_json:
+        name = ticket_field["name"]
+        ticket_fields[name] = {}
+        for key in ticket_field:
+            ticket_fields[name][key] = ticket_field[key]
 
-    # if args.post, post and make epic
-    if args.post:
+    # build default summary
+    if not fields.get("Summary"):
+        # will need guidance on what this should be generically
+        # also need to add checks that these other fields exist
+        fields["Summary"] = (
+            f"{fields['Study']} data intake from {fields['Data Source']} - {date}"
+        )
+
+    """
+    Remaining Questions:
+        # how do we handle list like fields?
+        # what if a field is a dict?
+        # how do we check allowed values and free form fields?
+        # how do we handle allowed values?
+        # do we use a default for allowed values?
+        #   how do I get them for non- data intake tickets?
+        # maybe don't handle allowed values and just let the api take care of it?
+        # what about user fields?
+        # what about user arrays?
+        
+    """
+
+    # loop through fields and associate fields with field id in issue
+    formatted_fields = {}
+    for field in fields:
+        if field == "Summary":
+            if not prd:
+                fields[field] = f"TEST {fields[field]}"
+
+        # check that field exists in issue type
+        if not field in ticket_fields:
+            message = f"Field {field} not found in issue type"
+            logger.error(message)
+            raise ValueError(message)
+
+        # format field data
+        # 6 types of fields for now
+        # will we need to split custom field ids from regular ones?
+        # might not need content dict, try to set description with just key: value
+        # [X] key: value
+        # [X] key: list of values
+        # [P] key: id (this is done for allowed values)
+        # [P] key: list of ids (see above)
+        # [ ] key: cotent dict
+        # [X] parent: key: ticket_id
+
+        # need to figure out which issues need ids and how to convert between name and id...
+        my_key = ticket_fields[field]["key"]
+        if my_key == "parent":
+            formatted_fields[my_key] = {"key": fields[field]}
+        if ticket_fields[field]["schema"]["type"] == "array":
+            my_list = fields[field].split(",")
+            if ticket_fields[field]["schema"]["items"] == "option":
+                my_list = [
+                    {"id": convert_keys_to_id(item, field, meta_res)}
+                    for item in my_list
+                ]
+            formatted_fields[my_key] = my_list
+        else:
+            if ticket_fields[field]["schema"]["type"] == "option":
+                formatted_fields[my_key] = {
+                    "id": convert_keys_to_id(fields[field], field, meta_res)
+                }
+            else:
+                formatted_fields[my_key] = fields[field]
+
+    # build the payload to post
+    formatted_fields["project"] = {"id": project_id}
+    formatted_fields["issuetype"] = {"id": issue_type_id}
+    payload = json.dumps({"fields": formatted_fields}).encode("utf-8")
+
+    # if post, post and make epic
+    if post:
         response = http.request("POST", url, body=payload, headers=headers)
 
         check_status(response)
 
         # extract epic id and transfer id
-        epic_key = json.loads(response.data)["key"]
+        ticket_key = json.loads(response.data)["key"]
 
         # wait before checking if transfer ticket exists
         time.sleep(5)
@@ -150,7 +223,7 @@ def intake_request(args, headers):
         print(json.dumps(json.loads(payload), sort_keys=True))
         print("-----------------------------")
 
-    return epic_key
+    return ticket_key
 
 
 def get_transfer_key(epic_key, headers, jira_url):
@@ -197,11 +270,32 @@ def main(args):
         "Content-Type": "application/json",
         "Authorization": f"Basic {args.auth}",
     }
-    epic_key = intake_request(args, headers)
 
-    if epic_key:
-        transfer_key = get_transfer_key(epic_key, headers, args.jira_url)
-        print(f"Epic ID: {epic_key}")
+    # get issue type id from project
+    project_id, issue_type_id = get_project_issue_type_ids(
+        args.project, args.issue_type, args.jira_url, headers
+    )
+
+    if issue_type_id is None:
+        message = f"Issue type {args.issue_type} not found in project {args.project}"
+        logger.error(message)
+        raise ValueError(message)
+
+    # build fields dict from args.fields
+    fields = json.loads(args.fields)
+
+    ticket_key = create_ticket(
+        project_id, issue_type_id, fields, args.post, args.prd, args.jira_url, headers
+    )
+
+    exit()
+
+    if args.issue_type == "Data Intake Epic":
+        transfer_key = get_transfer_key(ticket_key, headers, args.jira_url)
+        print(f"Data Intake Epic ID: {ticket_key}")
         print(f"Transfer Ticket ID: {transfer_key}")
+
+    else:
+        print(f"Ticket ID: {ticket_key}")
 
     return
