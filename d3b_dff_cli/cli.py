@@ -169,13 +169,7 @@ def create_parser():
     # need study, data_source, program, summary, prd, post
     request_parser.add_argument("-project", help="Jira project name", required=True)
     request_parser.add_argument("-issue_type", help="Jira issue_type", required=True)
-    request_parser.add_argument("-fields", help="JSON-like dictionary of issue fields", required=False) # need to set this to True eventually
-    request_parser.add_argument("-study", help="KF study name", required=False) # need to delete these eventually
-    request_parser.add_argument("-data_source", help="Data source name", required=False)
-    request_parser.add_argument("-program", help="Program name", required=False)
-    request_parser.add_argument(
-        "-summary", help="Optional summary for epic, overrides default", required=False
-    )
+    request_parser.add_argument("-fields", help="JSON-like dictionary of issue fields", required=True)
     request_parser.add_argument(
         "-prd",
         help="Optional, remove TEST from summary, default false",
