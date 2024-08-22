@@ -221,7 +221,7 @@ def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, header
         # [X] key: list of values
         # [P] key: id (this is done for allowed values and users)
         # [P] key: list of ids (see above)
-        # [ ] key: cotent dict
+        # [P] key: cotent dict (only for description)
         # [X] parent: key: ticket_id
 
         # need to figure out which issues need ids and how to convert between name and id...
@@ -249,6 +249,17 @@ def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, header
             elif ticket_fields[field]["schema"]["type"] == "user":
                 formatted_fields[my_key] = {
                     "id": convert_username_to_id(fields[field], jira_url, headers)
+                }
+            elif field == "Description":
+                formatted_fields[my_key] = {
+                    "content": [
+                        {
+                            "content": [{"text": fields[field], "type": "text"}],
+                            "type": "paragraph",
+                        }
+                    ],
+                    "type": "doc",
+                    "version": 1,
                 }
             else:
                 formatted_fields[my_key] = fields[field]
@@ -341,14 +352,13 @@ def main(args):
         project_id, issue_type_id, fields, args.post, args.prd, args.jira_url, headers
     )
 
-    exit()
+    if args.post:
+        if args.issue_type == "Data Intake Epic":
+            transfer_key = get_transfer_key(ticket_key, headers, args.jira_url)
+            print(f"Data Intake Epic ID: {ticket_key}")
+            print(f"Transfer Ticket ID: {transfer_key}")
 
-    if args.issue_type == "Data Intake Epic":
-        transfer_key = get_transfer_key(ticket_key, headers, args.jira_url)
-        print(f"Data Intake Epic ID: {ticket_key}")
-        print(f"Transfer Ticket ID: {transfer_key}")
-
-    else:
-        print(f"Ticket ID: {ticket_key}")
+        else:
+            print(f"Ticket ID: {ticket_key}")
 
     return
