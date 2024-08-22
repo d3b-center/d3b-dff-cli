@@ -93,6 +93,64 @@ def convert_keys_to_id(key, field, meta_res):
     return field_id
 
 
+def convert_username_to_id(username, jira_url, headers):
+    """
+    Convert from Jira username to id
+
+    Params:
+    - username (str): Jira email or displayName in a pinch
+    - jira_url (str): Jira base URL
+    - headers (dict): HTTP headers for Jira API requests
+
+    Returns:
+    - user_id (str): Jira user id
+    """
+
+    http = urllib3.PoolManager()
+
+    user_id = None
+
+    # if the username contains an at, use email else print warning and use displayName
+    search_field = "emailAddress"
+    if not "@" in username:
+        logger.warning(
+            "Assuming username is displayName. displayName is not unique, ensure you're using the correct user"
+        )
+        search_field = "displayName"
+
+    last_page = False
+    page = 0
+    while last_page == False:
+
+        user_url = f"{jira_url}/rest/api/3/users/search?startAt={page * 50}"
+        res = http.request("GET", user_url, headers=headers)
+        check_status(res)
+
+        data = json.loads(res.data)
+
+        # look for user
+        for user in data:
+            if (
+                search_field in user
+                and user[search_field] == username
+                and user["active"] == True
+            ):
+                user_id = user["accountId"]
+                last_page = True
+
+        if len(data) < 50:
+            last_page = True
+        else:
+            page += 1
+
+    if user_id is None:
+        message = f"User {username} not found in Jira"
+        logger.error(message)
+        raise ValueError(message)
+
+    return user_id
+
+
 def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, headers):
     """
     Create Jira ticket with provided fields
@@ -142,20 +200,6 @@ def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, header
             f"{fields['Study']} data intake from {fields['Data Source']} - {date}"
         )
 
-    """
-    Remaining Questions:
-        # how do we handle list like fields?
-        # what if a field is a dict?
-        # how do we check allowed values and free form fields?
-        # how do we handle allowed values?
-        # do we use a default for allowed values?
-        #   how do I get them for non- data intake tickets?
-        # maybe don't handle allowed values and just let the api take care of it?
-        # what about user fields?
-        # what about user arrays?
-        
-    """
-
     # loop through fields and associate fields with field id in issue
     formatted_fields = {}
     for field in fields:
@@ -175,7 +219,7 @@ def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, header
         # might not need content dict, try to set description with just key: value
         # [X] key: value
         # [X] key: list of values
-        # [P] key: id (this is done for allowed values)
+        # [P] key: id (this is done for allowed values and users)
         # [P] key: list of ids (see above)
         # [ ] key: cotent dict
         # [X] parent: key: ticket_id
@@ -191,11 +235,20 @@ def create_ticket(project_id, issue_type_id, fields, post, prd, jira_url, header
                     {"id": convert_keys_to_id(item, field, meta_res)}
                     for item in my_list
                 ]
+            elif ticket_fields[field]["schema"]["items"] == "user":
+                my_list = [
+                    {"id": convert_username_to_id(item, jira_url, headers)}
+                    for item in my_list
+                ]
             formatted_fields[my_key] = my_list
         else:
             if ticket_fields[field]["schema"]["type"] == "option":
                 formatted_fields[my_key] = {
                     "id": convert_keys_to_id(fields[field], field, meta_res)
+                }
+            elif ticket_fields[field]["schema"]["type"] == "user":
+                formatted_fields[my_key] = {
+                    "id": convert_username_to_id(fields[field], jira_url, headers)
                 }
             else:
                 formatted_fields[my_key] = fields[field]
