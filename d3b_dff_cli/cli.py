@@ -7,7 +7,7 @@ from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
-from .modules.intake.request import main as intake_request
+from .modules.jira.create_ticket import main as create_ticket
 
 
 def add_dewrangle_arguments(my_parser):
@@ -144,47 +144,53 @@ def create_parser():
     )
     dl_parser.set_defaults(func=download_dewrangle_job)
 
-    # Intake commands
-    # request: create data transfer intake epic
-    intake_parser = subparsers.add_parser("intake", help="Intake commands")
-    intake_subparsers = intake_parser.add_subparsers(
-        title="Intake Subcommands", dest="intake_command"
+    # Jira commands
+    # create_ticket: create ticket / epic
+    jira_parser = subparsers.add_parser("jira", help="Jira commands")
+    jira_subparsers = jira_parser.add_subparsers(
+        title="Jira Subcommands", dest="jira_command"
     )
 
-    # request subcommand
-    request_parser = intake_subparsers.add_parser(
-        "request", help="Create data transfer to epic in Jira"
+    # create_ticket subcommand
+    create_ticket_parser = jira_subparsers.add_parser(
+        "create_ticket", help="Create data transfer to epic in Jira"
     )
-    ## add intake request arguments
-    request_parser.add_argument(
+    ## add create_ticket arguments
+    create_ticket_parser.add_argument(
         "-auth",
         help="Base64 encoded Jira username and password",
         required=True,
     )
-    request_parser.add_argument(
+    create_ticket_parser.add_argument(
         "-jira_url",
         help="Jira url",
         required=True,
     )
     # need study, data_source, program, summary, prd, post
-    request_parser.add_argument("-project", help="Jira project name", required=True)
-    request_parser.add_argument("-issue_type", help="Jira issue_type", required=True)
-    request_parser.add_argument("-fields", help="JSON-like dictionary of issue fields", required=True)
-    request_parser.add_argument(
+    create_ticket_parser.add_argument(
+        "-project", help="Jira project name", required=True
+    )
+    create_ticket_parser.add_argument(
+        "-issue_type", help="Jira issue_type", required=True
+    )
+    create_ticket_parser.add_argument(
+        "-fields", help="JSON-like dictionary of issue fields", required=True
+    )
+    create_ticket_parser.add_argument(
         "-prd",
         help="Optional, remove TEST from summary, default false",
         required=False,
         default=False,
         action="store_true",
     )
-    request_parser.add_argument(
+    create_ticket_parser.add_argument(
         "-post",
-        help="Optional, actually post request and make epic, default: dump json payload",
+        help="Optional, actually post request and make ticket, default: dump json payload",
         required=False,
         default=False,
         action="store_true",
     )
-    request_parser.set_defaults(func=intake_request)
+    create_ticket_parser.set_defaults(func=create_ticket)
 
     return parser
 
