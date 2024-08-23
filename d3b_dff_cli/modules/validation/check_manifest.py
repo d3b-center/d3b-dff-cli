@@ -43,21 +43,20 @@ def validate_row(row, rules):
                 
                 # Check if file_format is "FASTQ," "BAM," or "CRAM" and file_size > specified value
                 if col == "file_size" and row.get("file_format", "").lower() in ["fastq", "bam", "cram"]:
-                    greater_than_value = consequence.get("greater_than")
-                    if greater_than_value:
+                    general_cutoff = consequence.get("general_byte_cutoff")
+                    wgs_wxs_cutoff = consequence.get("wgs_wxs_byte_cutoff")
+                    if general_cutoff:
                         experiment = row.get("experiment_strategy", "").lower()
                         if experiment in ["wgs", "wxs", "wes"]:
-                            greater_than_value = "1 GB"
-                            minum_value = 1_000_000_000 # WGS/WXS should be greater than 1G
+                            minum_value = float(wgs_wxs_cutoff)
                         else:
-                            greater_than_value = consequence.get("greater_than")
-                            minum_value = float(greater_than_value.rstrip("M"))*1000_000 # Other experimental strategy should be greater than the specified value.
-                        
+                            minum_value = float(general_cutoff)
+
                         if pd.notna(cell_value):
                             try:
                                 size_byte = float(cell_value)
                                 if size_byte < minum_value:
-                                    error_messages.append(f"Warning: *{col}* less than {greater_than_value}")
+                                    error_messages.append(f"Warning: *{col}* less than {minum_value}")
 
                             except ValueError:
                                 error_messages.append(f"*{col}*: {cell_value} is not a valid value")
