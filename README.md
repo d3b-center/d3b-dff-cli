@@ -88,17 +88,17 @@ To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate
   api_key = "<your token string>"
 ```
 
-### Intake
-Create Data Transfer Intake epic
+### Jira
+Create Jira ticket / epic
 ```bash
-d3b intake
-Subparser 'intake'
-usage: d3b intake [-h] {request} ...
+d3b jira
+Subparser 'jira'
+usage: d3b jira [-h] {create_ticket} ...
 
 optional arguments:
-  -h, --help  show this help message and exit
+  -h, --help       show this help message and exit
 
-Intake Subcommands:
-  {request}
-    request   Create data transfer to epic in Jira
+Jira Subcommands:
+  {create_ticket}
+    create_ticket  Create data transfer to epic in Jira
 ```
