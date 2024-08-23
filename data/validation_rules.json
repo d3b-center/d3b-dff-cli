@@ -380,8 +380,9 @@
       "consequences": [
         {
           "column": "file_size",
-          "general_byte_cutoff": "200,000,000",
-          "wgs_wxs_byte_cutoff": "1,000,000,000",
+          "_comment": "The threshold for WGS/WXS is 1GB, and 200MB for others.",
+          "general_byte_cutoff": "200000000",
+          "wgs_wxs_byte_cutoff": "1000000000",
           "valid": true
         }
       ]
