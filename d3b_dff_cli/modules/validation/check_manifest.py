@@ -54,21 +54,13 @@ def validate_row(row, rules):
                             minum_value = float(greater_than_value.rstrip("M"))*1000_000 # Other experimental strategy should be greater than the specified value.
                         
                         if pd.notna(cell_value):
-                            fize_size_str = str(cell_value).lower()
-
-                            # support file size formats in bytes, megabytes, and gigabytes: 100, 100M, 100MB, 10G, 10GB
+                            size_byte = float(cell_value)
                             try:
-                                if 'm' in fize_size_str:
-                                    size_byte = float(re.sub('[^0-9.]', '', fize_size_str)) * 1_000_000
-                                elif 'g' in fize_size_str:
-                                    size_byte = float(re.sub('[^0-9.]', '', fize_size_str)) * 1_000_000_000
-                                else:
-                                    size_byte = float(fize_size_str)
                                 if size_byte < minum_value:
                                     error_messages.append(f"Warning: *{col}* less than {greater_than_value}")
 
                             except ValueError:
-                                error_messages.append(f"*{col}*: {fize_size_str} is not a valid value")
+                                error_messages.append(f"*{col}*: {size_byte} is not a valid value")
 
     if error_messages:
         return False, error_messages  # Return all error messages for this row
