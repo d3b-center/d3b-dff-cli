@@ -86,3 +86,19 @@ To access Dewrangle, you must sign in to [Dewrangle](dewrangle.com) and generate
 ```bash
 [default]
   api_key = "<your token string>"
+```
+
+### Jira
+Create Jira ticket / epic
+```bash
+d3b jira
+Subparser 'jira'
+usage: d3b jira [-h] {create_ticket} ...
+
+optional arguments:
+  -h, --help       show this help message and exit
+
+Jira Subcommands:
+  {create_ticket}
+    create_ticket  Create data transfer to epic in Jira
+```

@@ -7,6 +7,7 @@ from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
+from .modules.jira.create_ticket import main as create_ticket
 
 
 def add_dewrangle_arguments(my_parser):
@@ -48,7 +49,10 @@ def add_dewrangle_arguments(my_parser):
     return my_parser
 
 
-def main():
+def create_parser():
+    """
+    Create the main parser for the d3b-dff-cli command-line interface.
+    """
     parser = argparse.ArgumentParser(
         description="A command-line interface for d3b-dff-cli."
     )
@@ -111,7 +115,9 @@ def main():
     )
 
     # hash subcommand
-    hash_parser = dewrangle_subparsers.add_parser("hash", help="Hash volume in Dewrangle")
+    hash_parser = dewrangle_subparsers.add_parser(
+        "hash", help="Hash volume in Dewrangle"
+    )
     hash_parser = add_dewrangle_arguments(hash_parser)
     hash_parser.set_defaults(func=hash_volume)
 
@@ -138,6 +144,64 @@ def main():
     )
     dl_parser.set_defaults(func=download_dewrangle_job)
 
+    # Jira commands
+    # create_ticket: create ticket / epic
+    jira_parser = subparsers.add_parser("jira", help="Jira commands")
+    jira_subparsers = jira_parser.add_subparsers(
+        title="Jira Subcommands", dest="jira_command"
+    )
+
+    # create_ticket subcommand
+    create_ticket_parser = jira_subparsers.add_parser(
+        "create_ticket", help="Create data transfer to epic in Jira"
+    )
+    ## add create_ticket arguments
+    create_ticket_parser.add_argument(
+        "-auth",
+        help="Base64 encoded Jira username and password",
+        required=True,
+    )
+    create_ticket_parser.add_argument(
+        "-jira_url",
+        help="Jira url",
+        required=True,
+    )
+    # need study, data_source, program, summary, prd, post
+    create_ticket_parser.add_argument(
+        "-project", help="Jira project name", required=True
+    )
+    create_ticket_parser.add_argument(
+        "-issue_type", help="Jira issue_type", required=True
+    )
+    create_ticket_parser.add_argument(
+        "-fields", help="JSON-like dictionary of issue fields", required=True
+    )
+    create_ticket_parser.add_argument(
+        "-prd",
+        help="Optional, remove TEST from summary, default false",
+        required=False,
+        default=False,
+        action="store_true",
+    )
+    create_ticket_parser.add_argument(
+        "-post",
+        help="Optional, actually post request and make ticket, default: dump json payload",
+        required=False,
+        default=False,
+        action="store_true",
+    )
+    create_ticket_parser.set_defaults(func=create_ticket)
+
+    return parser
+
+
+def main():
+    """
+    Main function, create argument parser, provide help messages, and call appropriate function.
+    """
+    # create parser
+    parser = create_parser()
+
     args = parser.parse_args()
 
     # if no arguments given, print help message
@@ -145,6 +209,7 @@ def main():
         parser.print_help(sys.stderr)
         sys.exit(1)
 
+    # if function exists, call function. else fail and print error message
     if hasattr(args, "func"):
         args.func(args)
     else:
