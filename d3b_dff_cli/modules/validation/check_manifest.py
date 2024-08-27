@@ -1,6 +1,7 @@
 import json
 import argparse
 import pandas as pd
+import re
 
 # Define a function to perform validation
 def validate_row(row, rules):
@@ -18,7 +19,11 @@ def validate_row(row, rules):
                 op_value = consequence.get("equals")
                 is_empty = consequence.get("empty")
                 
-                cell_value = str(row.get(col)).lower()
+                cell_value = row.get(col)
+                if is_empty and pd.isna(cell_value):
+                    error_messages.append(f"*{col}*: cannot be empty.")
+                else:
+                    cell_value = str(cell_value).lower()
 
                 if op_value != "" and op_value is not None:
                     allowed_values = op_value.split(",")
@@ -29,9 +34,6 @@ def validate_row(row, rules):
                         if cell_value != op_value.lower():
                             error_messages.append(f"*{col}*: must be {op_value}.")
 
-                if is_empty and not cell_value:
-                    error_messages.append(f"*{col}*: cannot be empty.")
-                
                 # Check if file_name ends with a valid extension
                 if col == "file_name" and "ends_with" in consequence:
                     format = conditions[0].get("equals")
@@ -41,16 +43,23 @@ def validate_row(row, rules):
                 
                 # Check if file_format is "FASTQ," "BAM," or "CRAM" and file_size > specified value
                 if col == "file_size" and row.get("file_format", "").lower() in ["fastq", "bam", "cram"]:
-                    greater_than_value = consequence.get("greater_than")
-                    if greater_than_value:
-                        try:
-                            file_size_in_gb = float(row.get(col, 0)) / (1024 * 1024 * 1024)  # Convert to GB
-                            if file_size_in_gb <= float(greater_than_value.rstrip(" GB")):
-                                error_messages.append(f"Warning: *{col}* less than {greater_than_value}")
-                        except ValueError:
-                            error_messages.append(f"*{col}* is not a valid numeric value")
+                    general_cutoff = consequence.get("general_byte_cutoff")
+                    wgs_wxs_cutoff = consequence.get("wgs_wxs_byte_cutoff")
+                    if general_cutoff:
+                        experiment = row.get("experiment_strategy", "").lower()
+                        if experiment in ["wgs", "wxs", "wes"]:
+                            minum_value = float(wgs_wxs_cutoff)
+                        else:
+                            minum_value = float(general_cutoff)
 
+                        if pd.notna(cell_value):
+                            try:
+                                size_byte = float(cell_value)
+                                if size_byte < minum_value:
+                                    error_messages.append(f"Warning: *{col}* less than {minum_value}")
 
+                            except ValueError:
+                                error_messages.append(f"*{col}*: {cell_value} is not a valid value")
 
     if error_messages:
         return False, error_messages  # Return all error messages for this row
