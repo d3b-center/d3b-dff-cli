@@ -315,8 +315,6 @@ def get_transfer_key(epic_key, headers, jira_url):
 
     query_data = json.loads(response.data)
 
-    print(query_url)
-
     # loop through fields to find transfer ticket
     for issue in query_data["issues"]:
         if "Data Transfer - " in issue["fields"]["summary"]:
@@ -352,13 +350,16 @@ def main(args):
         project_id, issue_type_id, fields, args.post, args.prd, args.jira_url, headers
     )
 
+    output_json = None
+
     if args.post:
         if args.issue_type == "Data Intake Epic":
             transfer_key = get_transfer_key(ticket_key, headers, args.jira_url)
-            print(f"Data Intake Epic ID: {ticket_key}")
-            print(f"Transfer Ticket ID: {transfer_key}")
+            output_json = {"Epic ID": ticket_key, "Transfer Ticket ID": transfer_key}
 
         else:
-            print(f"Ticket ID: {ticket_key}")
+            output_json = f"Ticket ID: {ticket_key}"
+
+        print(json.dumps(output_json, indent=4, sort_keys=True))
 
     return
