@@ -6,6 +6,10 @@ import subprocess
 import sys
 import glob
 
+wk_dir = os.path.dirname(os.path.abspath(__file__))
+mapping_file = os.path.join(wk_dir, "ingest_mapping.json")
+main_script = os.path.join(wk_dir, "main_prepare_script.py")
+
 def main(args):
     json_file = args.input
     with open(json_file, 'r') as file:
@@ -16,11 +20,11 @@ def main(args):
     genomic_manifest = data.get('genomics_manifest')
     sample_manifest = data.get('sample_manifest')
     hash_manifest = data.get('hash_manifest')
-    mapping_json = data.get('mapping_manifest', 'references/ingest_mapping.json')
+    mapping_json = data.get('mapping_manifest')
 
     # Set default value for mapping_json if it's empty
     if not mapping_json or mapping_json == "null":
-        mapping_json = "references/ingest_mapping.json"
+        mapping_json = mapping_file
 
     # Check for missing required fields
     if not package_name:
@@ -43,7 +47,7 @@ def main(args):
         sys.exit(1)
 
     # Step 1: prepare ingest config script
-    prepare_script_args = ["python3", "main_prepare_script.py", "-mapping", mapping_json]
+    prepare_script_args = ["python3", main_script, "-mapping", mapping_json]
     if use_case == "both":
         prepare_script_args += ["-sample", sample_manifest, "-genomic", genomic_manifest, "-hash", hash_manifest]
     elif use_case == "sample_only":

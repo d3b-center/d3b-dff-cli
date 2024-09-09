@@ -13,21 +13,37 @@ parser.add_argument("-hash", help="hash report manifest(.csv)", required=False)
 parser.add_argument("-mapping", help="ingest mapping file(.json)", required=False)
 args = parser.parse_args()
 
+
+def load_data(file):
+    # Load data based on file extension
+    file_extension = file.split('.')[-1].lower()
+    if file_extension == 'csv':
+        manifest_data = pd.read_csv(file)
+    elif file_extension == 'tsv':
+        manifest_data = pd.read_csv(file, delimiter='\t')
+    else:
+        raise ValueError("Unsupported file format. Please provide a CSV or TSV file.")
+    
+    # Convert manifest to lowercase
+    manifest_data = manifest_data.apply(lambda col: col.astype(str).str.lower() if col.dtype.name in ['object', 'bool'] else col)
+
+    return manifest_data
+
 # Initialize DataFrames
 sample_df = gf_df = hash_df = None
 
 # Load input files
 if args.sample and not args.genomic:
-    sample_df = pd.read_csv(args.sample)
+    sample_df = load_data(args.sample)
     use_case = 'sample_only'
 elif args.genomic and not args.sample:
-    gf_df = pd.read_csv(args.genomic)
-    hash_df = pd.read_csv(args.hash)
+    gf_df = load_data(args.genomic)
+    hash_df = load_data(args.hash)
     use_case = 'genomic_only'
 elif args.sample and args.genomic:
-    sample_df = pd.read_csv(args.sample)
-    gf_df = pd.read_csv(args.genomic)
-    hash_df = pd.read_csv(args.hash)
+    sample_df = load_data(args.sample)
+    gf_df = load_data(args.genomic)
+    hash_df = load_data(args.hash)
     use_case = 'both'
 else:
     raise ValueError("Either 'sample' or 'genomic' (or both) must be provided.")
