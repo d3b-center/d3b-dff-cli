@@ -5,7 +5,7 @@
       "_comment": "The threshold of file_size for WGS/WXS is 1GB, and 200MB for others.",
       "type": "integer",
       "general_cutoff": 200000000,
-      "wgs_wxs_cutoff": 200000000,
+      "wgs_wxs_cutoff": 1000000000,
       "dependencies": {"file_format": ["FASTQ", "BAM", "CRAM"]}
     },
     "file_name_extensions": {
