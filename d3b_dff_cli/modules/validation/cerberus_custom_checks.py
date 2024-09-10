@@ -34,7 +34,7 @@ class CustomValidator(Validator):
         if field == 'file_name':
             file_format = self.document.get('file_format')
             if file_format:
-                extensions = self.custom_rules.get('file_name_extensions', {})
+                extensions = self.custom_rules.get('file_name_extensions')
                 expected_extension = extensions.get(file_format)
                 if expected_extension and not value.lower().endswith(expected_extension):
                     self._error(field, f"{field} must end with {expected_extension} for file_format '{file_format}'.")
@@ -43,9 +43,9 @@ class CustomValidator(Validator):
         if field == 'file_size':
             file_format = self.document.get('file_format')
             experiment = self.document.get("experiment_strategy")
-            byte_cutoff_general = self.custom_rules.get('file_size_byte_cutoff', {}).get('general_cutoff', 0)
-            byte_cutoff_wgs_wxs = self.custom_rules.get('file_size_byte_cutoff', {}).get('wgs_wxs_cutoff', 0)
-            dependencies_format = self.custom_rules.get('file_size_byte_cutoff', {}).get('dependencies', {}).get('file_format', [])
+            byte_cutoff_general = self.custom_rules.get('file_size_byte_cutoff').get('general_cutoff')
+            byte_cutoff_wgs_wxs = self.custom_rules.get('file_size_byte_cutoff').get('wgs_wxs_cutoff')
+            dependencies_format = self.custom_rules.get('file_size_byte_cutoff').get('dependencies').get('file_format')
 
             minum_value = byte_cutoff_wgs_wxs if experiment in ["wgs", "wxs", "wes"] else byte_cutoff_general
 
