@@ -16,8 +16,14 @@
     }
   },
   "DNAseq_rules":{
-    "sample_id": {"required": true},
-    "aliquot_id": {"required": true},
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "tissue_type": {
         "type": "string",
         "required": true,
@@ -35,7 +41,10 @@
         "required": true,
         "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
     },
-    "file_hash_value": {"required": true},
+    "file_hash_value": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "sequencing_center": {"type": "string", "required": true},
     "platform": {
         "type": "string",
@@ -61,13 +70,11 @@
     "is_paired_end": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ", "BAM"]}
     },
     "is_adapter_trimmed": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ"]}
     },
     "flow_cell_barcode": {
@@ -83,7 +90,7 @@
     "adapter_sequencing": {
         "type": "string",
         "required": true,
-        "dependencies": {"is_adapter_trimmed": "FALSE"}
+        "dependencies": {"is_adapter_trimmed": false}
     },
     "target_capture_kit_name": {
         "type": "string",
@@ -102,8 +109,14 @@
     }
   },
   "RNAseq_rules":{
-    "sample_id": {"required": true},
-    "aliquot_id": {"required": true},
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "tissue_type": {
         "type": "string",
         "required": true,
@@ -121,7 +134,7 @@
         "required": true,
         "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
     },
-    "file_hash_value": {"required": true},
+    "file_hash_value": {"type": ["string","integer"], "required": true},
     "sequencing_center": {"type": "string", "required": true},
     "platform": {
         "type": "string",
@@ -157,13 +170,11 @@
     "is_paired_end": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ", "BAM"]}
     },
     "is_adapter_trimmed": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ"]}
     },
     "flow_cell_barcode": {
@@ -179,14 +190,26 @@
     "adapter_sequencing": {
         "type": "string",
         "required": true,
-        "dependencies": {"is_adapter_trimmed": "FALSE"}
+        "dependencies": {"is_adapter_trimmed": false}
     }
   },
   "single_cell_rules":{
-    "sample_id": {"required": true},
-    "aliquot_id": {"required": true},
-    "organism": {"required": true},
-    "cell_entity": {"required": true},
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "organism": {
+         "type": ["string","integer"],
+         "required": true
+    },
+    "cell_entity": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "tissue_type": {
         "type": "string",
         "required": true,
@@ -204,7 +227,7 @@
         "required": true,
         "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
     },
-    "file_hash_value": {"required": true},
+    "file_hash_value": {"type": ["string","integer"], "required": true},
     "sequencing_center": {"type": "string", "required": true},
     "platform": {
         "type": "string",
@@ -268,13 +291,11 @@
     "is_paired_end": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ", "BAM"]}
     },
     "is_adapter_trimmed": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ"]}
     },
     "flow_cell_barcode": {
@@ -290,12 +311,18 @@
     "adapter_sequencing": {
         "type": "string",
         "required": true,
-        "dependencies": {"is_adapter_trimmed": "FALSE"}
+        "dependencies": {"is_adapter_trimmed": false}
     }
   },
   "pacbio_longread_rules":{
-    "sample_id": {"required": true},
-    "aliquot_id": {"required": true},
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "tissue_type": {
         "type": "string",
         "required": true,
@@ -313,7 +340,10 @@
         "required": true,
         "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
     },
-    "file_hash_value": {"required": true},
+    "file_hash_value": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "sequencing_center": {"type": "string", "required": true},
     "platform": {
         "type": "string",
@@ -354,13 +384,11 @@
     "is_paired_end": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ", "BAM"]}
     },
     "is_adapter_trimmed": {
         "type": "boolean",
         "required": true,
-        "allowed": ["TRUE", "FALSE"],
         "dependencies": {"file_format": ["FASTQ"]}
     },
     "flow_cell_barcode": {
@@ -376,7 +404,7 @@
     "adapter_sequencing": {
         "type": "string",
         "required": true,
-        "dependencies": {"is_adapter_trimmed": "FALSE"}
+        "dependencies": {"is_adapter_trimmed": false}
     },
     "target_capture_kit_name": {
         "type": "string",
@@ -395,8 +423,14 @@
     }
   },
   "methylation_rules":{
-    "sample_id": {"required": true},
-    "aliquot_id": {"required": true},
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "tissue_type": {
         "type": "string",
         "required": true,
@@ -414,7 +448,10 @@
         "required": true,
         "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
     },
-    "file_hash_value": {"required": true},
+    "file_hash_value": {
+        "type": ["string","integer"],
+        "required": true
+    },
     "sequencing_center": {"type": "string", "required": true},
     "platform": {
         "type": "string",
