@@ -535,8 +535,18 @@
         },
         {
             "type": "keep_map",
-            "in_col": "data_category",
-            "out_col": "CONCEPT.GENOMIC_FILE.DATA_CATEGORY"
+            "in_col": "file_id",
+            "out_col": "CONCEPT.GENOMIC_FILE.CAVATICA_FILE_ID"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "volume_name",
+            "out_col": "CONCEPT.GENOMIC_FILE.CAVATICA_VOLUME"
+        },
+        {
+            "type": "keep_map",
+            "in_col": "file_type",
+            "out_col": "CONCEPT.GENOMIC_FILE.WORKFLOW_ENDPOINT"
         },
         {
             "type": "keep_map",
