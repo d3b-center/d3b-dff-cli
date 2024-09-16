@@ -5,6 +5,7 @@ import urllib3
 import logging
 import time
 from datetime import datetime
+from base64 import b64encode
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -328,9 +329,21 @@ def get_transfer_key(epic_key, headers, jira_url):
 
 def main(args):
     """Main function."""
+
+    # figure out if we have args.user and args.key or args.auth
+    auth = None
+
+    if args.user and args.key:
+        auth = b64encode(f"{args.user}:{args.key}".encode()).decode()
+    elif args.auth:
+        auth = args.auth
+    else:
+        logger.error("No authentication provided")
+        raise ValueError("No authentication provided")
+
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Basic {args.auth}",
+        "Authorization": f"Basic {auth}",
     }
 
     # get issue type id from project

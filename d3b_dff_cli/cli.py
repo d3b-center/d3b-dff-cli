@@ -151,8 +151,10 @@ def create_parser():
     create_ticket_parser.add_argument(
         "-auth",
         help="Base64 encoded Jira username and password",
-        required=True,
+        required=False,
     )
+    create_ticket_parser.add_argument("-user", help="Jira username", required=False)
+    create_ticket_parser.add_argument("-key", help="Jira API key", required=False)
     create_ticket_parser.add_argument(
         "-jira_url",
         help="Jira url",
