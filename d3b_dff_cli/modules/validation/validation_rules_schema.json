@@ -1,0 +1,467 @@
+{
+  "custom_rules":{
+    "_comment": "Add custom fields that Cerberus doesn't recognize as valid schema rules.",
+    "file_size_byte_cutoff":{
+      "_comment": "The threshold of file_size for WGS/WXS is 1GB, and 200MB for others.",
+      "type": "integer",
+      "general_cutoff": 200000000,
+      "wgs_wxs_cutoff": 1000000000,
+      "dependencies": {"file_format": ["FASTQ", "BAM", "CRAM"]}
+    },
+    "file_name_extensions": {
+        "bam": ".bam",
+        "bai": ".bai",
+        "cram": ".cram",
+        "crai": ".crai"
+    }
+  },
+  "DNAseq_rules":{
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "tissue_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Tumor", "Normal", "Abnormal", "Peritumoral", "Unknown", "Not Reported"]
+    },
+    "file_name": {"type": "string", "required": true},
+    "file_format": {
+        "type": "string",
+        "required": true,
+        "allowed": ["FASTQ", "BAM", "BAI", "CRAM", "CRAI", "GVCF", "VCF", "TBI", "MAF", "PDF", "HTML", "DCM", "IDAT", "SVS", "GPR", "CNS", "TXT", "PNG", "CSV", "PED", "SEG", "TAR", "TSV"]
+    },
+    "file_size": {"type": "integer", "required": true},
+    "file_hash_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
+    },
+    "file_hash_value": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "sequencing_center": {"type": "string", "required": true},
+    "platform": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Complete Genomics", "Illumina", "Ion Torrent", "LS454", "SOLiD", "ONT", "DNBSEQ", "Other"]
+    },
+    "instrument_model": {
+        "type": "string",
+        "required": true
+    },
+    "experiment_strategy": {
+        "type": "string",
+        "required": true,
+        "allowed": ["WGS", "WXS", "Targeted Sequencing", "Panel"]
+    },
+    "total_reads": {"type": "integer", "required": true},
+    "read_pair_number": {
+        "type": "string",
+        "required": true,
+        "allowed": ["R1", "R2", "Not Applicable"],
+        "dependencies": {"file_format": "FASTQ"}
+    },
+    "is_paired_end": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ", "BAM"]}
+    },
+    "is_adapter_trimmed": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "flow_cell_barcode": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "lane_number": {
+        "type": "integer",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "adapter_sequencing": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"is_adapter_trimmed": false}
+    },
+    "target_capture_kit_name": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"experiment_strategy": ["Targeted Sequencing", "Panel"]}
+    },
+    "target_capture_kit_link": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"experiment_strategy": ["Targeted Sequencing", "Panel"]}
+    },
+    "mean_coverage": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"experiment_strategy": ["WGS", "WXS", "WES", "Targeted Sequencing", "Panel"]}
+    }
+  },
+  "RNAseq_rules":{
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "tissue_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Tumor", "Normal", "Abnormal", "Peritumoral", "Unknown", "Not Reported"]
+    },
+    "file_name": {"type": "string", "required": true},
+    "file_format": {
+        "type": "string",
+        "required": true,
+        "allowed": ["FASTQ", "BAM", "BAI", "CRAM", "CRAI", "GVCF", "VCF", "TBI", "MAF", "PDF", "HTML", "DCM", "IDAT", "SVS", "GPR", "CNS", "TXT", "PNG", "CSV", "PED", "SEG", "TAR", "TSV"]
+    },
+    "file_size": {"type": "integer", "required": true},
+    "file_hash_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
+    },
+    "file_hash_value": {"type": ["string","integer"], "required": true},
+    "sequencing_center": {"type": "string", "required": true},
+    "platform": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Complete Genomics", "Illumina", "Ion Torrent", "LS454", "SOLiD", "ONT", "DNBSEQ", "Other"]
+    },
+    "instrument_model": {
+        "type": "string",
+        "required": true
+    },
+    "experiment_strategy": {
+        "type": "string",
+        "required": true,
+        "allowed": ["RNA-Seq","RNAseq","miRNA-Seq"]
+    },
+    "library_selection": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Affinity Enrichment","Hybrid Selection","miRNA Size Fractionation","PCR","Poly-T Enrichment","Random","rRNA Depletion","Other"]
+    },
+    "library_strand": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Stranded","Unstranded","First Stranded","Second Stranded","Not Applicable"]
+    },
+    "total_reads": {"type": "integer", "required": true},
+    "read_pair_number": {
+        "type": "string",
+        "required": true,
+        "allowed": ["R1", "R2", "Not Applicable"],
+        "dependencies": {"file_format": "FASTQ"}
+    },
+    "is_paired_end": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ", "BAM"]}
+    },
+    "is_adapter_trimmed": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "flow_cell_barcode": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "lane_number": {
+        "type": "integer",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "adapter_sequencing": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"is_adapter_trimmed": false}
+    }
+  },
+  "single_cell_rules":{
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "organism": {
+         "type": ["string","integer"],
+         "required": true
+    },
+    "cell_entity": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "tissue_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Tumor", "Normal", "Abnormal", "Peritumoral", "Unknown", "Not Reported"]
+    },
+    "file_name": {"type": "string", "required": true},
+    "file_format": {
+        "type": "string",
+        "required": true,
+        "allowed": ["FASTQ", "BAM", "BAI", "CRAM", "CRAI", "GVCF", "VCF", "TBI", "MAF", "PDF", "HTML", "DCM", "IDAT", "SVS", "GPR", "CNS", "TXT", "PNG", "CSV", "PED", "SEG", "TAR", "TSV"]
+    },
+    "file_size": {"type": "integer", "required": true},
+    "file_hash_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
+    },
+    "file_hash_value": {"type": ["string","integer"], "required": true},
+    "sequencing_center": {"type": "string", "required": true},
+    "platform": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Complete Genomics", "Illumina", "Ion Torrent", "LS454", "SOLiD", "ONT", "DNBSEQ", "Other"]
+    },
+    "instrument_model": {
+        "type": "string",
+        "required": true
+    },
+    "experiment_strategy": {
+        "type": "string",
+        "required": true,
+        "allowed": ["scRNA-Seq", "snRNA-Seq"]
+    },
+    "end_bias": {
+        "type": "string",
+        "required": true,
+        "allowed": ["3'-end", "5'-end", "Full-length"]
+    },
+    "library_selection": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Affinity Enrichment","Hybrid Selection","miRNA Size Fractionation","PCR","Poly-T Enrichment","Random","rRNA Depletion","Other"]
+    },
+    "library_strand": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Stranded","Unstranded","First Stranded","Second Stranded","Not Applicable"]
+    },
+    "library_construction": {
+        "type": "string",
+        "required": true
+    },
+    "UMI_barcode_read": {
+        "type": "string",
+        "required": true,
+        "allowed": ["index1","index2","read1","read2","Not Applicable"]
+    },
+    "UMI_barcode_offset": {"type": "integer", "required": true},
+    "cell_barcode_read": {
+        "type": "string",
+        "required": true,
+        "allowed": ["index1","index2","read1","read2","Not Applicable"]
+    },
+    "UMI_barcode_size": {"type": "integer", "required": true},
+    "cell_barcode_offset": {"type": "integer", "required": true},
+    "cell_barcode_size": {"type": "integer", "required": true},
+    "cDNA_read": {
+        "type": "string",
+        "required": true,
+        "allowed": ["index1","index2","read1","read2","Not Applicable"]
+    },
+    "cDNA_read_offset": {"type": "integer", "required": true},
+    "read_pair_number": {
+        "type": "string",
+        "required": true,
+        "allowed": ["R1", "R2", "Not Applicable"],
+        "dependencies": {"file_format": "FASTQ"}
+    },
+    "is_paired_end": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ", "BAM"]}
+    },
+    "is_adapter_trimmed": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "flow_cell_barcode": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "lane_number": {
+        "type": "integer",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "adapter_sequencing": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"is_adapter_trimmed": false}
+    }
+  },
+  "pacbio_longread_rules":{
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "tissue_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Tumor", "Normal", "Abnormal", "Peritumoral", "Unknown", "Not Reported"]
+    },
+    "file_name": {"type": "string", "required": true},
+    "file_format": {
+        "type": "string",
+        "required": true,
+        "allowed": ["FASTQ", "BAM", "BAI", "CRAM", "CRAI", "GVCF", "VCF", "TBI", "MAF", "PDF", "HTML", "DCM", "IDAT", "SVS", "GPR", "CNS", "TXT", "PNG", "CSV", "PED", "SEG", "TAR", "TSV"]
+    },
+    "file_size": {"type": "integer", "required": true},
+    "file_hash_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
+    },
+    "file_hash_value": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "sequencing_center": {"type": "string", "required": true},
+    "platform": {
+        "type": "string",
+        "required": true,
+        "allowed": ["PacBio"]
+    },
+    "instrument_model": {
+        "type": "string",
+        "required": true
+    },
+    "experiment_strategy": {
+        "type": "string",
+        "required": true,
+        "allowed": ["WGS", "WXS", "RNA-Seq", "Targeted Sequencing", "Panel"]
+    },
+    "library_selection": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Affinity Enrichment","Hybrid Selection","miRNA Size Fractionation","PCR","Poly-T Enrichment","Random","rRNA Depletion","Other"]
+    },
+    "library_strand": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Stranded","Unstranded","First Stranded","Second Stranded","Not Applicable"]
+    },
+    "sequencing_mode": {
+        "type": "string",
+        "required": true,
+        "allowed": ["CLR","CCS"]
+    },
+    "total_reads": {"type": "integer", "required": true},
+    "read_pair_number": {
+        "type": "string",
+        "required": true,
+        "allowed": ["R1", "R2", "Not Applicable"],
+        "dependencies": {"file_format": "FASTQ"}
+    },
+    "is_paired_end": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ", "BAM"]}
+    },
+    "is_adapter_trimmed": {
+        "type": "boolean",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "flow_cell_barcode": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "lane_number": {
+        "type": "integer",
+        "required": true,
+        "dependencies": {"file_format": ["FASTQ"]}
+    },
+    "adapter_sequencing": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"is_adapter_trimmed": false}
+    },
+    "target_capture_kit_name": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"experiment_strategy": ["Targeted Sequencing", "Panel"]}
+    },
+    "target_capture_kit_link": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"experiment_strategy": ["Targeted Sequencing", "Panel"]}
+    },
+    "mean_coverage": {
+        "type": "string",
+        "required": true,
+        "dependencies": {"experiment_strategy": ["WGS", "WXS", "WES", "Targeted Sequencing", "Panel"]}
+    }
+  },
+  "methylation_rules":{
+    "sample_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "aliquot_id": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "tissue_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Tumor", "Normal", "Abnormal", "Peritumoral", "Unknown", "Not Reported"]
+    },
+    "file_name": {"type": "string", "required": true},
+    "file_format": {
+        "type": "string",
+        "required": true,
+        "allowed": ["FASTQ", "BAM", "BAI", "CRAM", "CRAI", "GVCF", "VCF", "TBI", "MAF", "PDF", "HTML", "DCM", "IDAT", "SVS", "GPR", "CNS", "TXT", "PNG", "CSV", "PED", "SEG", "TAR", "TSV"]
+    },
+    "file_size": {"type": "integer", "required": true},
+    "file_hash_type": {
+        "type": "string",
+        "required": true,
+        "allowed": ["MD5", "SHA1", "SHA256", "SHA512", "ETag"]
+    },
+    "file_hash_value": {
+        "type": ["string","integer"],
+        "required": true
+    },
+    "sequencing_center": {"type": "string", "required": true},
+    "platform": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Illumina Infinium HumanMethylation450","Illumina Infinium HumanMethylationEPIC","Illumina Infinium HumanMethylationEPICv2","Illumina Infinium HumanMethylation27k","Roche NimbleGen MethylationSeq","Agilent SurePrint Methyl-Seq"]
+    },
+    "experiment_strategy": {
+        "type": "string",
+        "required": true,
+        "allowed": ["Methylation", "Methylation Microarray"]
+    }
+  }
+}
