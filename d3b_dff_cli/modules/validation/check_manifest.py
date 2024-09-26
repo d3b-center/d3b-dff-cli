@@ -62,9 +62,9 @@ def validate_data(df, schema_json):
                 rule_type = "DNAseq_rules"
             elif experiment_strategy in ["rna-seq", "rnaseq", "mirna-seq", "mirnaseq"]:
                 rule_type = "RNAseq_rules"
-            elif experiment_strategy in ["scrna-seq", "snran-seq", "scrnaseq", "snranseq"]:
+            elif experiment_strategy in ["scrna-seq", "snrna-seq", "scrnaseq", "snrnaseq"]:
                 rule_type = "single_cell_rules"
-            elif experiment_strategy in ["methtlation", "methylation microarray"]:
+            elif experiment_strategy in ["methylation", "methylation microarray"]:
                 rule_type = "methylation_rules"
             else:
                 raise ValueError(f"Unsupported experiment_strategy for Row {index + 1}")
