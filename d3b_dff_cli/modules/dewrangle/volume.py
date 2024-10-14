@@ -105,7 +105,41 @@ def list_and_hash_volume(client, volume_id, billing_id):
     return job_id
 
 
-def load_and_hash_volume(
+def list_volume(client, volume_id):
+    """Run Dewrangle list volume mutation."""
+
+    # prepare mutation
+    mutation = gql(
+        """
+        mutation VolumeListMutation($id: ID!) {
+            volumeList(id: $id) {
+                errors {
+                    ... on MutationError {
+                        message
+                        field
+                    }
+                }
+                job {
+                    id
+                }    
+            }
+        }
+        """
+    )
+
+    params = {"id": volume_id}
+
+    # run mutation
+    result = client.execute(mutation, variable_values=params)
+
+    hf.check_mutation_result(result)
+
+    job_id = result["volumeListAndHash"]["job"]["id"]
+
+    return job_id
+
+
+def load_and_run_job(
     bucket_name,
     study_name,
     region,
@@ -113,9 +147,10 @@ def load_and_hash_volume(
     billing=None,
     aws_cred=None,
     token=None,
+    job_type=str,
 ):
     """
-    Wrapper function that checks if a volume is loaded, and hashes it.
+    Wrapper function that checks if a volume is loaded, and either hashes or lists it.
     Inputs: AWS bucket name, study name, aws region, and optional volume prefix.
     Output: job id of parent job created when volume is hashed.
     """
@@ -128,9 +163,6 @@ def load_and_hash_volume(
         # get study and org ids
         study_id = hf.get_study_id(client, study_name)
         org_id = hf.get_org_id_from_study(client, study_id)
-
-        # get billing group id
-        billing_group_id = hf.get_billing_id(client, org_id, billing)
 
         # check if volume loaded to study
         study_volumes = hf.get_study_volumes(client, study_id)
@@ -147,8 +179,13 @@ def load_and_hash_volume(
                 client, study_id, prefix, region, bucket_name, aws_cred_id
             )
 
-        # hash
-        job_id = list_and_hash_volume(client, volume_id, billing_group_id)
+        if job_type == "hash":
+            # get billing group id
+            billing_group_id = hf.get_billing_id(client, org_id, billing)
+            job_id = list_and_hash_volume(client, volume_id, billing_group_id)
+
+        elif job_type == "list":
+            job_id = list_volume(client, volume_id, None)
 
     except Exception:
         print(
@@ -161,14 +198,29 @@ def load_and_hash_volume(
     return job_id
 
 
-def main(args):
-    """Main function. Call load_and_hash and output job_id."""
-    job_id = load_and_hash_volume(
+def run_list(args):
+    """Other main function to load and list a volume."""
+    job_id = load_and_run_job(
         args.bucket,
         args.study,
         args.region,
         args.prefix,
         args.billing,
         args.credential,
+        "list",
+    )
+    print(job_id)
+
+
+def main(args):
+    """Main function. Call load_and_hash and output job_id."""
+    job_id = load_and_run_hash(
+        args.bucket,
+        args.study,
+        args.region,
+        args.prefix,
+        args.billing,
+        args.credential,
+        "hash",
     )
     print(job_id)
