@@ -134,7 +134,7 @@ def list_volume(client, volume_id):
 
     hf.check_mutation_result(result)
 
-    job_id = result["volumeListAndHash"]["job"]["id"]
+    job_id = result["volumeList"]["job"]["id"]
 
     return job_id
 
@@ -143,11 +143,11 @@ def load_and_run_job(
     bucket_name,
     study_name,
     region,
+    job_type,
     prefix=None,
     billing=None,
     aws_cred=None,
     token=None,
-    job_type=str,
 ):
     """
     Wrapper function that checks if a volume is loaded, and either hashes or lists it.
@@ -185,7 +185,7 @@ def load_and_run_job(
             job_id = list_and_hash_volume(client, volume_id, billing_group_id)
 
         elif job_type == "list":
-            job_id = list_volume(client, volume_id, None)
+            job_id = list_volume(client, volume_id)
 
     except Exception:
         print(
@@ -204,23 +204,23 @@ def run_list(args):
         args.bucket,
         args.study,
         args.region,
+        "list",
         args.prefix,
         args.billing,
         args.credential,
-        "list",
     )
     print(job_id)
 
 
 def main(args):
     """Main function. Call load_and_hash and output job_id."""
-    job_id = load_and_run_hash(
+    job_id = load_and_run_job(
         args.bucket,
         args.study,
         args.region,
+        "hash",
         args.prefix,
         args.billing,
         args.credential,
-        "hash",
     )
     print(job_id)
