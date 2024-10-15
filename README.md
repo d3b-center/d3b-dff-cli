@@ -64,7 +64,7 @@ To perform dewrangling tasks, use the dewrangle command with subcommands:
 ```bash
 d3b dewrangle
 Subparser 'dewrangle'
-usage: d3b dewrangle [-h] {hash,list_jobs,download} ...
+usage: d3b dewrangle [-h] {hash,list_volume,list_jobs,download} ...
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -72,6 +72,7 @@ optional arguments:
 Dewrangle Subcommands:
   {hash,list_jobs,download}
     hash                Hash volume in Dewrangle
+    list_volume         List volume in Dewrangle
     list_jobs           List volume jobs in Dewrangle
     download            Download job results from Dewrangle
 ```

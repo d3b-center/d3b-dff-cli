@@ -5,6 +5,7 @@ from .modules.validation.check_manifest import main as check_manifest
 from .modules.validation.check_readgroup import main as check_readgroup
 from .modules.validation.check_url import main as check_url
 from .modules.dewrangle.volume import main as hash_volume
+from .modules.dewrangle.volume import run_list as list_volume
 from .modules.dewrangle.list_jobs import main as list_jobs
 from .modules.dewrangle.download_job import main as download_dewrangle_job
 from .modules.jira.create_ticket import main as create_ticket
@@ -99,6 +100,7 @@ def create_parser():
 
     # Dewrangle commands
     # hash: load a bucket to Dewrangle and hash it
+    # list: load a bucket to Dewrangle and list files in it
     # list_jobs: list jobs run on a bucket
     # download: download the results of a job
     dewrangle_parser = subparsers.add_parser("dewrangle", help="Dewrangle commands")
@@ -112,6 +114,13 @@ def create_parser():
     )
     hash_parser = add_dewrangle_arguments(hash_parser)
     hash_parser.set_defaults(func=hash_volume)
+
+    # list subcommand
+    list_vol_parser = dewrangle_subparsers.add_parser(
+        "list_volume", help="List volume in Dewrangle"
+    )
+    list_vol_parser = add_dewrangle_arguments(list_vol_parser)
+    list_vol_parser.set_defaults(func=list_volume)
 
     # list_jobs subcommand
     list_parser = dewrangle_subparsers.add_parser(
