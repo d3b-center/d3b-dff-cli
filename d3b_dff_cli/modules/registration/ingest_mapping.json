@@ -286,7 +286,7 @@
         },
         {
             "type": "keep_map",
-            "in_col": "visibility_reason",
+            "in_col": "visibility_comment",
             "out_col": "CONCEPT.BIOSPECIMEN.VISIBILITY_COMMENT"
         },
         {
