@@ -382,11 +382,6 @@
         },
         {
             "type": "keep_map",
-            "in_col": "target_capture_kit_link",
-            "out_col": "CONCEPT.SEQUENCING.PAIRED_END"
-        },
-        {
-            "type": "keep_map",
             "in_col": "is_paired_end",
             "out_col": "CONCEPT.SEQUENCING.PAIRED_END"
         },
@@ -424,11 +419,6 @@
             "type": "keep_map",
             "in_col": "library_name",
             "out_col": "CONCEPT.SEQUENCING.LIBRARY_NAME"
-        },
-        {
-            "type": "keep_map",
-            "in_col": "target_capture_kit_link",
-            "out_col": "CONCEPT.SEQUENCING.TARGET_CAPTURE_KIT"
         },
         {
             "type": "keep_map",

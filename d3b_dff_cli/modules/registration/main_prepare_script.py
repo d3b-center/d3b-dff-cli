@@ -57,7 +57,7 @@ with open(mapping_df, 'r') as json_file:
 def check_study_id(df):
     study_values = df['study_id'].dropna().unique()
     if len(study_values) == 1:
-        study_str = str(study_values[0])
+        study_str = str(study_values[0].upper())
         return study_str
     else:
         print(f"ERROR: study_id is {study_values}")
@@ -493,7 +493,7 @@ def generate_ingest_config_both(study,operations_script,mappings,mapping_section
 if use_case == 'sample_only':
     sample_operations_script = generate_operations_script(sample_df, mappings, "sample_metadata")
 
-    if sample_df['family_relationship'].isnull().any():
+    if 'family_relationship' not in sample_df.columns or sample_df['family_relationship'].isnull().any():
         save_script(source_sample_template, sample_operations_script, "config_sample.py")
     else:
         missing_fr = check_required_columns(sample_df, 'family_relationship')
@@ -516,7 +516,7 @@ elif use_case == 'genomic_only':
 
 elif use_case == 'both':
     sample_operations_script = generate_operations_script(sample_df, mappings, "sample_metadata")
-    if sample_df['family_relationship'].isnull().any():
+    if 'family_relationship' not in sample_df.columns or sample_df['family_relationship'].isnull().any():
         save_script(source_sample_template, sample_operations_script, "config_sample.py")
     else:
         missing_fr = check_required_columns(sample_df, 'family_relationship')
